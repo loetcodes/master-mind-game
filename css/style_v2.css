@@ -9,6 +9,7 @@
 		display: grid;
 		grid-template-rows: 5% 90% 5%;
 		grid-template-columns: 5% 90% 5%;
+		grid-row-gap: 1%;
 		margin: 0 2%;
 		background-position: top;
 		background-size: 205%;
@@ -20,8 +21,10 @@
 		grid-column: 2;
 		grid-row: 1;
 		grid-template-columns: 20% 80%;
-		background: red;
+		background: #131313;
 		height: fit-content;
+		color: wheat;
+		text-align:center;
 	}
 
 	.left-side-panel {
@@ -43,13 +46,28 @@
 		grid-column: 2;
 		grid-column-start: 1;
 		grid-column-end: 4;
-		width: 90%;
-		height: 100%;
+		width: 520px;
+		height: 890px;
 		background: black;
 		margin: auto;
 		background-image: url("../images/overview_background.png");
 		background-size: 192% 100%;
-		background-position: right;
-		
+		background-size: 200% 150%;
+		background-position: 76%;
+		z-index: 0;
+	}
+
+	#game-bottom {
+		width: 520px;
+		height: 890px;
+		z-index: 0;
+	}
+
+
+	#game-player {
+		width: 520px;
+		height: 890px;
+		background: none;
+		z-index: 1;
 	}
 }
