@@ -19,30 +19,36 @@ init(); // Initialize the canvas sizes and widths
 // The urls for the peg color images and board images to be used in the game
 let peg_colors = 8;
 let peg_url = {
-	1 : "./images/peg_blue.png",
-	2 : "./images/peg_green.png",
-	3 : "./images/peg_yellow.png",
-	4 : "./images/peg_orange.png",
-	5 : "./images/peg_purple.png",
-	6 : "./images/peg_red.png",
-	7 : "./images/peg_black.png",
-	8 : "./images/peg_white.png"
+	1 : "./images/04_Peg_blue.png",
+	2 : "./images/04_Peg_green.png",
+	3 : "./images/04_Peg_yellow.png",
+	4 : "./images/04_Peg_orange.png",
+	5 : "./images/04_Peg_purple.png",
+	6 : "./images/04_Peg_red.png",
+	7 : "./images/04_Peg_black.png",
+	8 : "./images/04_Peg_white.png"
 };
 
+let answer_pegs = {
+	1 : "./images/05_Answer_black",
+	2 : "./images/05_Answer_white",
+	3 : "./images/05_Answer_red",
+}
+
 let board_hole_url = {
-	4 : "./images/board_holes_4slots.png",
-	5 : "./images/board_holes_5slots.png",
-	6 : "./images/board_holes_6slots.png",
-	7 : "./images/answer_4slots.png",
-	8 : "./images/answer_5slots.png",
-	9 : "./images/answer_6slots.png"
+	4 : "./images/02_Line_4.png",
+	5 : "./images/02_Line_5.png",
+	6 : "./images/02_Line_6.png",
+	7 : "./images/03_Answer_box_4.png",
+	8 : "./images/03_Answer_box_5.png",
+	9 : "./images/03_Answer_box_6.png"
 };
 
 let icons_url = {
-	"back" : "./images/back_button.png",
-	"new" : "./images/hint_button.png",
-	"hint" : "./images/hint_button.png",
-	"submit" : "./images/tick_button.png"
+	"back" : "./images/06_Buttons_back.png",
+	"new" : "./images/06_Buttons_new_game.png",
+	"hint" : "./images/06_Buttons_hint.png",
+	"submit" : "./images/06_Buttons_check_answer.png"
 }
 
 let num_board_holes = [4, 5, 6]; // Convert this to a dictionary
@@ -67,12 +73,22 @@ let curr_play_row = 10;
 let player_answers = [];
 let col_selected = false; // For storing colours that are clicked on;
 
-let right_ctrl_btns = [];
-// let right_panel_key = {
-// 	1 : backIcon(),
-// 	2 : showHint(),
-// 	3 : checkAnswer()
+let right_ctrl_btns = []; // Stores the button objects
+let ctrl_btns_action = {
+	1 : "BACK BUTTON",
+	2 : "NEW GAME BUTTON",
+	3 : "SHOW HINT",
+	4 : "CHECK ANSWER"
+};
+// let ctrl_btns_funcs = {
+// 	1 : backIcon,
+// 	2 : newGame,
+// 	3 : showHint,
+// 	4 : checkAnswer
 // };
+let ctrl_btns_funcs = {
+	4 : checkAnswer
+};
 
 
 
@@ -85,22 +101,23 @@ let right_ctrl_btns = [];
 */
 
 
-// Side panel of colors
+// Left Side panel of colors
 for (let k = 1; k <= 8; k++) {
 	let img_height = canvas_1.height / 20;
 	let img_width = img_height;
 	let img = new Image();
 	img.src = peg_url[k];
 	color_panel = img_width + 8 * 2;
+
 	img.onload = function () {
+		let x_pos, y_pos, radius, x_pos_center, y_pos_center;
+
+		x_pos = 10;
 		y_pos = (k - 0) * img_height + (20 * 2 * k);
 		radius = (img_width) / 2;
 
 		x_pos_center = 10 + radius;
 		y_pos_center = y_pos + img_height / 2;
-
-		top_left_x = 8;
-		top_left_y = y_pos;
 
 		// Create a color peg object used later for detection of click, push to color pegs array. 
 		let color_peg = new ColorCircle(x_pos_center, y_pos_center, radius, k, img_width, img_height);
@@ -110,7 +127,7 @@ for (let k = 1; k <= 8; k++) {
 		color_images[k] = img;
 
 		// Draw the image and the color circle.
-		ctx_1.drawImage(img, 10, y_pos, img_width, img_height);
+		ctx_1.drawImage(img, x_pos, y_pos, img_width, img_height);
 		color_peg.drawCircle();
 	}
 }
@@ -123,21 +140,23 @@ console.log("color images in the dictionary are", color_images);
 // Draw scoring_image and player peg holes images
 let row_height = (canvas_1.height * 0.85) / 12;
 score_row_start = color_panel + 15;
-player_row_start = 0;
+player_row_start = score_row_start + 50;
 
 for (let i = 1; i <= 10; i++) {
 	// Positioning scoring counter image.
 	let scoring_img = new Image();
 	scoring_img.src = board_hole_url[7];
 
-	let scoring_img_height, scoring_img_width;
+	let scoring_img_height, scoring_img_width, scoring_img_scale;
 	scoring_img.onload = function () {
-		let scoring_img_scale = scoring_img.width / scoring_img.height;
+		let x_pos, y_pos;
+
+		scoring_img_scale = scoring_img.width / scoring_img.height;
 		scoring_img_height = row_height;
 		scoring_img_width = scoring_img_height * scoring_img_scale;
 
 		x_pos = score_row_start;
-		y_pos = scoring_img_height + ((i - 1) * scoring_img_height + (14 * i));
+		y_pos = scoring_img_height + ((i - 1) * scoring_img_height + (14 * (i - 1)));
 
 		ctx_1.drawImage(scoring_img, x_pos, y_pos, scoring_img_width, scoring_img_height);
 	}
@@ -146,15 +165,18 @@ for (let i = 1; i <= 10; i++) {
 	let hole_img = new Image();
 	hole_img.src = board_hole_url[4];
 
-	let hole_img_width, hole_img_height;
+	let hole_img_width, hole_img_height, hole_img_scale;
 	hole_img.onload = function () {
-		let hole_img_scale = hole_img.width / hole_img.height;
+		let x_pos, y_pos;
+		
+		hole_img_scale = hole_img.width / hole_img.height;
 		hole_img_height = row_height;
 		hole_img_width = hole_img_height * hole_img_scale;
+
 		player_row_start = score_row_start + scoring_img_width + 25;
 
 		x_pos = player_row_start;
-		y_pos = hole_img_height + ((i - 1) * hole_img_height + (14 * i));
+		y_pos = hole_img_height + ((i - 1) * hole_img_height + (14 * (i - 1)));
 
 		ctx_1.drawImage(hole_img, x_pos, y_pos, hole_img_width, hole_img_height);
 
@@ -164,27 +186,23 @@ for (let i = 1; i <= 10; i++) {
 }
 
 
-// Right side top icons and buttons.
+// Control buttons for back, new game, hint and check answer.
 
 // back game icon
 let back_icon = new Image();
 back_icon.src = icons_url["back"];
 
-let back_icon_width, back_icon_height;
+let back_icon_width, back_icon_height, back_icon_scale;
 back_icon.onload = () => {
-	let radius, back_icon_scale;
+	let x_pos, y_pos, radius;
 	let temp_no = 1;
 
 	back_icon_scale = back_icon.width / back_icon.height;
-	back_icon_height = row_height - 10;
+	back_icon_height = row_height - 15;
 	back_icon_width = back_icon_height * back_icon_scale;
 
-	right_panel_start = canvas_1.width - 14 - back_icon_width;
-
-	x_pos = right_panel_start;
-	y_pos = row_height * temp_no - row_height + 10 * temp_no;
-	console.log("Back icon x pos is", x_pos);
-	console.log("Back icon y pos is", y_pos);
+	x_pos = 8;
+	y_pos = row_height * 11 + (10 * 14);
 	radius = back_icon_width - 10;
 
 	// Create a hint circle obj used later for click detection, push to right buttons.
@@ -203,22 +221,19 @@ back_icon.onload = () => {
 let newgame_icon = new Image();
 newgame_icon.src = icons_url["new"];
 
-let newgame_icon_width, newgame_icon_height;
+let newgame_icon_width, newgame_icon_height, newgame_icon_scale;
 newgame_icon.onload = () => {
-	let radius, newgame_icon_scale;
+	let x_pos, y_pos, radius;
 	let temp_no = 2;
 
 	newgame_icon_scale = newgame_icon.width / newgame_icon.height;
-	newgame_icon_height = row_height - 10;
+	newgame_icon_height = row_height - 15;
 	newgame_icon_width = newgame_icon_height * newgame_icon_scale;
 
-	right_panel_start = canvas_1.width - 14 - newgame_icon_width;
-
-	x_pos = right_panel_start;
-	y_pos = row_height * temp_no - row_height + 10 * temp_no;
-	console.log("New game icon x pos is", x_pos);
-	console.log("New game y pos is", y_pos);
-	radius = newgame_icon_width - 10;
+	
+	x_pos = score_row_start + (12 * 2);
+	y_pos = row_height + row_height * 10 + 10 * 14;
+	radius = newgame_icon_width - (12 * 2);
 
 	// Create a hint circle obj used later for click detection, push to right buttons.
 	// use the number to access the correct function in the right_panel_key.
@@ -236,22 +251,18 @@ newgame_icon.onload = () => {
 let hint_icon = new Image();
 hint_icon.src = icons_url["hint"];
 
-let hint_icon_width, hint_icon_height;
+let hint_icon_width, hint_icon_height, hint_icon_scale;
 hint_icon.onload = () => {
-	let radius, hint_icon_scale;
+	let x_pos, y_pos, radius;
 	let temp_no = 3;
 
 	hint_icon_scale = hint_icon.width / hint_icon.height;
-	hint_icon_height = row_height - 10;
+	hint_icon_height = row_height - 15;
 	hint_icon_width = hint_icon_height * hint_icon_scale;
 
-	right_panel_start = canvas_1.width - 14 - hint_icon_width;
-
-	x_pos = right_panel_start;
-	y_pos = row_height * temp_no - row_height + 10 * temp_no;
-	console.log("Hint icon x pos is", x_pos);
-	console.log("Hint icon y pos is", y_pos);
-	radius = hint_icon_width - 10;
+	x_pos = score_row_start * 2 + (12 * 6);
+	y_pos = row_height + row_height * 10 + 10 * 14;
+	radius = hint_icon_width - (12 * 2);
 
 	// Create a hint circle obj used later for click detection, push to right buttons.
 	// use the number to access the correct function in the right_panel_key.
@@ -275,17 +286,14 @@ check_icon.onload = () => {
 	let temp_no = 4;
 
 	check_icon_scale = check_icon.width / check_icon.height;
-	check_icon_height = row_height - 10;
+	check_icon_height = row_height - 15;
 	check_icon_width = check_icon_height * check_icon_scale;
 
 	right_panel_start = canvas_1.width - 4 - check_icon_width;
 
 	x_pos = right_panel_start;
-	y_pos = row_height * 12 - row_height + 10 * 12;
-	y_pos = row_height * 13 - row_height + 10 * 2;
-	console.log("Check icon x pos is", x_pos);
-	console.log("Check icon y pos is", y_pos);
-	radius = check_icon_width - 10 * 3;
+	y_pos = row_height * (curr_play_row + 2) + 10;
+	radius = check_icon_width - (12 * 2);
 
 	// Create a hint circle obj used later for click detection, push to right buttons.
 	// use the number to access the correct function in the right_panel_key.
@@ -297,9 +305,6 @@ check_icon.onload = () => {
 	// Draw the icon image
 	ctx_1.drawImage(check_icon, x_pos, y_pos, check_icon_width, check_icon_height);
 }
-
-
-
 
 
 
@@ -352,6 +357,7 @@ canvas_2.addEventListener('click', (e) => {
 			if (col_selected) {
 				// Means a color is selected. Create an obj to store details.
 				let curr_col = {
+					img_number : col_selected.img_number,
 					src : color_images[col_selected.img_number],
 					x : circle.x,
 					y : circle.y,
@@ -379,11 +385,6 @@ canvas_2.addEventListener('click', (e) => {
 	});
 
 
-	// Check the right side panel if clicked
-
-	// If submit is clicked, draw the scoring pegs from the result.
-
-
 	// Draw each pos based on row_poses, in the correct new position.
 	console.log("Row poses are", row_poses);
 	for (let item of row_poses) {
@@ -392,8 +393,25 @@ canvas_2.addEventListener('click', (e) => {
 		}
 	}
 
-	// update the entire row drawing based on true false.
-	console.log("You clicked on the peg hole", circle_clicked);
+
+	// Check if any of the buttons have been clicked
+	right_ctrl_btns.forEach(function(button) {
+		let button_result = checkIntersect(pos, button);
+
+		if (button_result) {
+			console.log("You clicked on button", button.img_number,"which is the", ctrl_btns_action[button.img_number]);
+
+			// Create and call the func expression.
+			let btn_func = ctrl_btns_funcs[button.img_number];
+			btn_func();
+		}
+
+	});
+
+
+
+	// If submit is clicked, draw the scoring pegs from the result.
+
 });
 
 
@@ -452,7 +470,7 @@ function ColorCircle(x_center, y_center, radius, img_number, img_width, img_heig
 	this.img_number = img_number;
 	this.img_width = img_width;
 	this.img_height = img_height;
-	this.color = '#2a2a2d26';
+	this.color = 'red';
 }
 
 ColorCircle.prototype.drawCircle = function() {
@@ -522,6 +540,27 @@ function checkIntersect(point, circle) {
 	// Check if a point lies within a certain circle area by computing its distance from the center of the circle.
 	let dist = Math.abs(Math.sqrt((point.x - circle.x) ** 2 + (point.y - circle.y) ** 2));
 	return dist <= circle.radius;
+}
+
+
+function drawCircle(context, x, y, radius, color) {
+	// Draw a circle in a position (x, y)
+	ctx_2.beginPath();
+	ctx_2.arc(x, y, radius, 0, 2 * Math.PI);
+	ctx_2.strokeStyle = "color";
+	ctx_2.stroke();
+}
+
+
+// function drawImageOnCanvas(context, image, x, y, width, height) {
+// 	// Draws on a specific context.
+// 	context.drawImage(image, x, y, width, height);
+// }
+
+
+function clearFromCanvas(context, top_x, top_y, width, height) {
+	// Clear the canvas elements within a defined rectangle.
+	context.clearRect(top_x, top_y, width, height);
 }
 
 
@@ -598,22 +637,84 @@ function newGameAnswers(base_array, hole_len) {
 }
 
 
-function drawCircle(context, x, y, radius, color) {
-	// Draw a circle in a position (x, y)
-	ctx_2.beginPath();
-	ctx_2.arc(x, y, radius, 0, 2 * Math.PI);
-	ctx_2.strokeStyle = "color";
-	ctx_2.stroke();
+function calulatePegValues(machine_ans, player_ans) {
+	// Check if values are the same. If not, return to what extent they are different.
+	// If you find a position that is correct, do not count it anymore, check the rest instead.
+	let m_ans, p_ans;
+	let num_black_peg = 0;
+	let num_white_peg = 0;
+	let result = {};
+
+	let p_reduced = [];
+	let m_reduced = [];
+
+	// First check for any black pegs. Black pegs are where the player puts the color in the correct position
+	for (let i = 0; i < machine_ans.length; i++) {
+		m_ans = machine_ans[i];
+		p_ans = player_ans[i];
+
+		if (m_ans == p_ans) {
+			num_black_peg += 1;
+		} else {
+			m_reduced.push(m_ans);
+			p_reduced.push(p_ans);
+		}
+	}
+
+	result[1] = num_black_peg;
+	result[2] = num_white_peg;
+
+	// Check for white pegs from the reduced array where black scored pegs have been removed.
+	if (num_black_peg == machine_ans.length) {
+		return result;
+	} else {
+		// check for white pegs
+		for (let j = 0; j < p_reduced.length; j++) {
+			if (m_reduced.includes(p_ans[j])) {
+				num_white_peg += 1;
+			}
+		}
+		result[2] = num_white_peg;
+	}
+
+	// return the result of the black and white pegs
+	return result;
 }
 
 
-// function drawImageOnCanvas(context, image, x, y, width, height) {
-// 	// Draws on a specific context.
-// 	context.drawImage(image, x, y, width, height);
-// }
+function checkAnswer() {
+	// Checks the answer submitted for the row against the machine answer.
+	let curr_row = row_poses;
+	let row_player_answers = [];
+	console.log("When submitted the row answers were", curr_row);
+
+	if (curr_row.includes(0)) {
+		// Meaning their is an unfilled position
+		return;
+	} else {
+		// Extract the players answers into an array.
+		curr_row.forEach((img_obj) => {
+			row_player_answers.push(img_obj.img_number);
+		});
+
+		// Consider selecting submit when you have not answered everything should do nothing
+
+		// Score the players answer into black and white pegs
+		let row_scores = calulatePegValues(game_answers, row_player_answers);
+		console.log("The resulting score is", row_scores);
+
+		// Draw the resulting pegs based on the row_scores
 
 
-function clearFromCanvas(context, top_x, top_y, width, height) {
-	// Clear the canvas elements within a defined rectangle.
-	context.clearRect(top_x, top_y, width, height);
+		// If all 4 pegs, game_state should be false
+
+
+		// If not, move the submit button higher up a row, then change the curr row play
+
+	
+		//return result;
+	}
+
 }
+
+
