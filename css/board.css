@@ -1,0 +1,134 @@
+
+/*STYLING FOR THE MASTERMIND BOARD GAME*/
+
+* {
+	--board-height: ;
+	--board-width: ;
+}
+
+.body-content {
+	height: 100vh;
+	background: #0b0b0c;
+	/*background-image: url("../images/overview_background.png");*/
+	display: grid;
+	grid-template-rows: 5% 95%;
+	grid-template-columns: 100%;
+	margin: auto;
+	background-position: top;
+	background-size: 205%;
+	background-repeat-x: no-repeat;
+	background-position-x: -412px;
+}
+
+canvas {
+	border: 1px solid #0b0b0c;
+	grid-row: 2;
+	grid-column: 2;
+	grid-column-start: 1;
+	grid-column-end: 4;
+	background: black;
+	margin: auto;
+	background-image: url("../images/01_Background_small.png");
+	background-size: 192% 100%;
+	background-size: 200% 150%;
+	background-position: 76%;
+	z-index: 0;
+}
+
+
+.top-section {
+	grid-column: 1;
+	grid-row: 1;
+	grid-template-columns: 20% 80%;
+	background: #131313;
+	height: fit-content;
+	color: wheat;
+	text-align:center;
+	font-size: 1em;
+}
+
+.title-text {
+	font-size: 1em;
+}
+
+
+#game-bottom {
+	z-index: 0;
+}
+
+
+#game-player {
+	background: none;
+	z-index: 1;
+}
+
+
+@media (max-width: 800px) {
+	.body-content {
+		height: 100vh;
+		background: #0b0b0c;
+		/*background-image: url("../images/overview_background.png");*/
+		display: grid;
+		grid-template-rows: 5% 95%;
+		grid-template-columns: 100%;
+		/*grid-row-gap: 1%;*/
+		margin: auto;
+		background-position: top;
+		background-size: 205%;
+		background-repeat-x: no-repeat;
+		background-position-x: -412px;
+	}
+
+	.top-section {
+		grid-column: 1;
+		grid-row: 1;
+		grid-template-columns: 20% 80%;
+		background: #131313;
+		height: fit-content;
+		color: wheat;
+		text-align:center;
+		font-size: 1em;
+	}
+
+	.title-text {
+		font-size: 1em;
+	}
+
+	.left-side-panel {
+		grid-column: 1;
+		grid-row: 2;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+	}
+
+	.right-side-panel {
+		grid-column: 3;
+		grid-row: 2;
+	}
+	
+	canvas {
+		border: 1px solid #0b0b0c;
+		grid-row: 2;
+		grid-column: 2;
+		grid-column-start: 1;
+		grid-column-end: 4;
+		background: black;
+		margin: auto;
+		background-image: url("../images/01_Background_small.png");
+		background-size: 192% 100%;
+		background-size: 200% 150%;
+		background-position: 76%;
+		z-index: 0;
+	}
+
+	#game-bottom {
+		z-index: 0;
+	}
+
+
+	#game-player {
+		background: none;
+		z-index: 1;
+	}
+}

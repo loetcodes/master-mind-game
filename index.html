@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MasterMind Gems</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="css/main_page.css">
+	<script type="text/javascript" src="js/main_page.js"></script>
+	
+</head>
+
+<body class="body-content">
+	<div class="top-section">
+		<div class="title-header">
+			<img class="game-title" src="images/07_Title.png">
+		</div>
+	</div>
+
+	<!-- MAIN PAGE MENU -->
+	<nav id="main-pg" class="content-section load-transition">
+		<a class="nav-link" href="FourBoard.html" target="">
+			<div class="menu-title load-item initial-load" id="new-game">New Game</div>
+		</a>
+		<a class="nav-link" href="#instructions-page" onclick="hideAndShow('main-pg','instructions-page')">
+			<div class="menu-title load-item initial-load" id="instructions">Instructions</div>
+		</a>
+		<a class="nav-link" href="#settings" target="">
+			<div class="menu-title load-item initial-load" id="settings">Settings</div>
+		</a>
+	</nav>
+
+	<!-- INSTRUCTIONS SECTION -->
+	<div id="instructions-page" class="content-section">
+		<div class="toggle-item">
+			<h2 class="page-title">Instructions</h2>
+		</div>
+		<div id="instructions-content" class="text-box toggle-item">
+			<p class="text-content"> The point of Mastermind is to guess your opponents colours. You have 10 chances to guess the color combinations that your opponent has played. <br> The point of Mastermind is to guess your opponents colours. You have 10 chances to guess the color combinations that your opponent has played. <br>The point of Mastermind is to guess your opponents colours. You have 10 chances to guess the color combinations that your opponent has played.</p>
+		</div>
+		<a class="nav-link" href="#main-pg">
+			<div class="menu-title load-item" id="back"  onclick="hideAndShow('instructions-page','main-pg')">Back</div>
+		</a>
+	</div>
+
+	<div id="settings-page" class="content-section">
+		
+	</div>
+
+	<footer class="footer-content">
+		<div class="information">
+			<span class="creator-info">&copy;2019 &nbsp; &nbsp;Made by Lulets</span>
+			<!-- <hr class="line-divider"> -->
+			<div class="social-media">
+				<a class="social-link" href="https://twitter.com/luizoutlets" title="twitter">
+					<img class="social-icon" src="images/social_icons/twitter-light-wheat-40px.png" alt="Twitter link">
+				</a>
+				<a class="social-link" href="mailto:luletco@gmail.com" title="mail">
+					<img class="social-icon" src="images/social_icons/mail-light-wheat-40px.png" alt="email link">
+				</a>
+				<a class="social-link" href="https://github.com/lulets" title="github">
+					<img class="social-icon" src="images/social_icons/github-light-wheat-40px.png" alt="Github link">
+				</a>
+			</div>
+		</div>
+	</footer>
+	
+</body>
+</html>
