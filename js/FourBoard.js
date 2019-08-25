@@ -1,10 +1,4 @@
-/* Javascript for MasterMind 2.0
-
-Made provisions for 2 canvases.
- 1. Canvas for drawing the background fixed graphics.
- 2. Canvas for drawing the player moves and temporary images in play.
-
-*/
+/* Javascript for MasterMind 2.0 */
 
 
 // Declare the two canvasses and the respective context.
@@ -14,63 +8,38 @@ canvas_2 = document.getElementById('game-player');
 let width, height;
 
 
-sizeInitialCanvas(); // Initialize the canvas sizes and widths based on window
-init(); // Initialize the rest of the game variables
 
-
-// VARIABLES USED THROUGHOUT THE GAME
 // The urls for the peg color images and board images to be used in the game
 let peg_colors = 8;
-let peg_url = {
-	1 : "./images/circle_pegs/04_Peg_navyblue.png",
-	2 : "./images/circle_pegs/04_Peg_brown.png",
-	3 : "./images/circle_pegs/04_Peg_green.png",
-	4 : "./images/circle_pegs/04_Peg_teal.png",
-	5 : "./images/circle_pegs/04_Peg_purple.png",
-	6 : "./images/circle_pegs/04_Peg_lightgold.png",
-	7 : "./images/circle_pegs/04_Peg_pink.png",
-	8 : "./images/circle_pegs/04_Peg_red.png"
-};
+let peg_urls = ["./images/circle_pegs/04_Peg_navyblue.png", "./images/circle_pegs/04_Peg_brown.png", "./images/circle_pegs/04_Peg_green.png", "./images/circle_pegs/04_Peg_teal.png", "./images/circle_pegs/04_Peg_purple.png", "./images/circle_pegs/04_Peg_lightgold.png", "./images/circle_pegs/04_Peg_pink.png", "./images/circle_pegs/04_Peg_red.png"];
 
-let answer_pegs = {
-	1 : "./images/05_Answer_red_2.png",
-	2 : "./images/05_Answer_white_2.png"
-}
+let board_hole_url = ["./images/02_Line_4.png", "./images/03_Answer_box_4.png"];
+let icons_url = ["./images/06_Buttons_back.png", "./images/06_Buttons_new_game.png", "./images/06_Buttons_hint.png", "./images/06_Buttons_check_answer.png"];
+let answer_url = ["./images/05_Answer_red_2.png", "./images/05_Answer_white_2.png"];
 
-let board_hole_url = {
-	4 : "./images/02_Line_4.png",
-	5 : "./images/02_Line_5.png",
-	6 : "./images/02_Line_6.png",
-	7 : "./images/03_Answer_box_4.png",
-	8 : "./images/03_Answer_box_5.png",
-	9 : "./images/03_Answer_box_6.png"
-};
-
-let icons_url = {
-	"back" : "./images/06_Buttons_back.png",
-	"new" : "./images/06_Buttons_new_game.png",
-	"hint" : "./images/06_Buttons_hint.png",
-	"submit" : "./images/06_Buttons_check_answer.png"
-}
 
 let num_board_holes = [4, 5, 6]; // Convert this to a dictionary
 let score_cols = [1, 2];
 
 
-// Initialize the game state to true. This will be true when the player starts the game. If false, then the game has ended, no more moves allowed.
-let game_state = true;
+// Load images count
+let loadcount = 0;
+let loadtotal = 0;
+let preloaded = false;
 
+
+let color_images, four_board, game_ctrls_imgs, answer_images;
+let answer_images_2 = {};
+let game_ctrls = {};
+let game_state = true;
 let color_panel = 0;
 let score_row_start = 0;
 let player_row_start = 0;
 let right_panel_start = 0;
 
+
 let color_pegs = []; // stores the color pegs shapes
-let color_images = {}; // store all the color panel images created.
-let answer_images = {}; // store the answer images for the scoring holes.
-
 let answ_poses = []; // stores x and y relative positions for drawing pos and col ans pegs
-
 let row_circles = {};
 let scoring_circles = {};
 
@@ -78,21 +47,15 @@ let row_poses = [0, 0, 0, 0];
 let curr_play_row = 10;
 let player_answers = [];
 let col_selected = false; // For storing colors that are clicked on;
+let initialized = false;
 
-let game_ctrls = {}; // Stores the button objects
+
 let ctrl_btns_action = {
 	1 : "BACK BUTTON",
 	2 : "NEW GAME BUTTON",
 	3 : "SHOW HINT",
 	4 : "CHECK ANSWER"
 };
-
-// let ctrl_btns_funcs = {
-// 	1 : backIcon,
-// 	2 : newGame,
-// 	3 : showHint,
-// 	4 : checkAnswer
-// };
 
 let ctrl_btns_funcs = {
 	2 : startNewGame,
@@ -101,7 +64,7 @@ let ctrl_btns_funcs = {
 
 
 
-// ---------------- COMPUTE THE ANSWERS FOR THE GAME AND STORE THEM ----------------
+// ---------------- COMPUTE THE ANSWERS FOR THE GAME AND STORE THEM -------------------
 
 let base_array;
 base_array = generateRandomNumbers(num_board_holes[0]); 
@@ -109,37 +72,49 @@ let game_answers = newGameAnswers(base_array, num_board_holes[0]);
 
 
 
-// ------- DEFINE AND DRAW FIXED GRAPHICS ONTO THE BACKGROUND CANVAS -----------------
+//-------------------INITIALIZE THE GAME VARIABLES-------------------------------------
 
-// Includes: Side color panel (8 colors), Scoring image pegs (10 rows), Player peg holes (10), Game control icons at the very bottom
+sizeInitialCanvas(); // Initialize the canvas sizes and widths based on window
+init(); // Initialize the game variables and all the images
 
-let row_grid_height = canvas_1.height / 12;
 
-// Left Side panel of colors
-for (let k = 1; k <= 8; k++) {
+
+//-----------------RUN THE PRELOADER GAME----------------------------------------------
+main(); // Run the game preloader.
+
+function main() {
+	// If initialized
+	if (!initialized) {
+		console.log("Images not initialized. keep loading", initialized);
+		// Keep calling the loader animation
+	} else {
+		// After all the items have been initialized, start the main game by returning to the normal game flow.
+		return;
+	}	
+}
+
+
+// ------- MAIN GAME PLAY DRAW FIXED GRAPHICS ONTO THE BACKGROUND CANVAS -----------------
+row_grid_height = canvas_1.height / 12;
+for (let k = 1; k <= 8; k++) { // Draw left Side panel of colors
+	let x_pos, y_pos, radius, x_pos_center, y_pos_center;
 	let img_height = row_grid_height - (0.40 * row_grid_height);
 	let img_width = img_height;
-
-	let img = new Image();
-	img.src = peg_url[k];
 	color_panel = img_width + (0.02 * canvas_1.width) * 2;
+
+	x_pos = (0.02 * canvas_1.width); // 2 percent from the edge
+	y_pos = k * row_grid_height + (row_grid_height - img_height) / 2;
+	radius = (img_width) / 2;
+
+	x_pos_center = x_pos + radius;
+	y_pos_center = y_pos + img_height / 2;
+
+	// Create a color peg object used later for detection of click, push to color pegs array. 
+	let color_peg = new ColorCircle(x_pos_center, y_pos_center, radius, k, img_width, img_height);
+	color_pegs.push(color_peg);
+
+	let img = color_images[k];
 	img.onload = function () {
-		let x_pos, y_pos, radius, x_pos_center, y_pos_center;
-
-		x_pos = (0.02 * canvas_1.width); // 2 percent from the edge
-		y_pos = k * row_grid_height + (row_grid_height - img_height) / 2;
-		radius = (img_width) / 2;
-
-		x_pos_center = x_pos + radius;
-		y_pos_center = y_pos + img_height / 2;
-
-		// Create a color peg object used later for detection of click, push to color pegs array. 
-		let color_peg = new ColorCircle(x_pos_center, y_pos_center, radius, k, img_width, img_height);
-		color_pegs.push(color_peg);
-
-		// Store the color peg in the color_images dictionary
-		color_images[k] = img;
-
 		// Draw the image and the color circle.
 		ctx_1.drawImage(img, x_pos, y_pos, img_width, img_height);
 		// color_peg.drawColorCircle();
@@ -151,10 +126,9 @@ for (let k = 1; k <= 8; k++) {
 
 score_row_start = color_panel + (0.012 * canvas_1.width);
 
-// Draw the 10 scoring boxes.
-let scoring_img_height, scoring_img_width, scoring_img_scale;
-let scoring_img = new Image();
-scoring_img.src = board_hole_url[7];
+// Draw the 10 scoring boxes and 11 blank hole rows
+let scoring_img, scoring_img_height, scoring_img_width, scoring_img_scale;
+scoring_img = four_board[2];
 scoring_img.onload = function () {
 	let x_pos, y_pos;
 	scoring_img_scale = scoring_img.width / scoring_img.height;
@@ -170,45 +144,52 @@ scoring_img.onload = function () {
 // Draw the 10 player peg hole images and the one for the machine answer row
 let hole_img, hole_img_width, hole_img_height, hole_img_scale;
 let ans_box_width, ans_box_height, ans_top_x, ans_top_y;
-window.setTimeout(function() {
-	hole_img = new Image();
-	hole_img.src = board_hole_url[4];
-	player_row_start = score_row_start + scoring_img_width + (0.02 * canvas_1.width) * 2;
-	hole_img.onload = function () {
-		let x_pos, y_pos;
-		hole_img_scale = hole_img.width / hole_img.height;
-		hole_img_height = row_grid_height - (0.20 * row_grid_height);
-		hole_img_width = hole_img_height * hole_img_scale;
+
+hole_img = four_board[1];
+hole_img_height = row_grid_height - (0.20 * row_grid_height);
+console.log("hole image is", hole_img);
+console.log("hole image height is", hole_img_height);
+hole_img.onload = function() {
+	let x_pos, y_pos;
+	hole_img_scale = hole_img.width / hole_img.height;
+	hole_img_height = row_grid_height - (0.20 * row_grid_height);
+	hole_img_width = hole_img_height * hole_img_scale;
+
+	ans_box_width = hole_img_width + (0.03 * canvas_1.width) * 2;
+	ans_box_height = hole_img_height + (0.05 * hole_img_height) * 2;
+
+	window.setTimeout(function() {
+		player_row_start = score_row_start + scoring_img_width + (0.02 * canvas_1.width) * 2;
 		x_pos = player_row_start;
 
-		ans_box_width = hole_img_width + (0.03 * canvas_1.width) * 2;
-		ans_box_height = hole_img_height + (0.05 * hole_img_height) * 2;
 		for (let i = 0; i <= 10; i++) {
-			if (i == 0) {
-				// Draw the box containing the machine answers and the covers.
-				drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_img_width, hole_img_height, ans_box_width, ans_box_height);
-			}
-			// Draw the rest of the grid peg hole images
+			// Compute the y value for the images
 			y_pos = i * row_grid_height + (row_grid_height - hole_img_height) / 2;
-			drawImageOnCanvas(ctx_1, hole_img, x_pos, y_pos, hole_img_width, hole_img_height);
 
 			// Row circles array for each row, stored with a corresponding number.
 			row_circles[i] = createRowCircles(x_pos, y_pos, hole_img_height, hole_img_width, num_board_holes[0], game_state);
-		}
-		drawGameAnswers(game_answers);
-	}
-}, 200);
 
+			if (i == 0) {
+				// Draw the box containing the machine answers and the covers.
+				drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_img_width, hole_img_height, ans_box_width, ans_box_height);
+
+				//draw the game answers
+				drawGameAnswers(game_answers, row_circles[0]);
+			} else {
+				// Draw the rest of the grid peg hole images
+				drawImageOnCanvas(ctx_1, hole_img, x_pos, y_pos, hole_img_width, hole_img_height);
+			}
+		}
+
+	}, 200);
+}
 
 
 //---------- CONTROL BUTTONS FOR BACK, NEW GAME, HINT AND CHECK ANSWER --------------
 
-let back_icon, newgame_icon, hint_icon, check_icon
-
 // back game icon located far left of the canvas
-back_icon = new Image();
-back_icon.src = icons_url["back"];
-
+let back_icon, newgame_icon, hint_icon, check_icon;
+back_icon = game_ctrls_imgs[1];
 let back_icon_width, back_icon_height, back_icon_scale;
 back_icon.onload = () => {
 	let x_pos, y_pos, radius;
@@ -232,9 +213,7 @@ back_icon.onload = () => {
 
 
 // new game icon located far right of the canvas
-newgame_icon = new Image();
-newgame_icon.src = icons_url["new"];
-
+newgame_icon = game_ctrls_imgs[2];
 let newgame_icon_width, newgame_icon_height, newgame_icon_scale;
 newgame_icon.onload = () => {
 	let x_pos, y_pos, radius;
@@ -257,9 +236,7 @@ newgame_icon.onload = () => {
 }
 
 // Hint icon located in the middle
-hint_icon = new Image();
-hint_icon.src = icons_url["hint"];
-
+hint_icon = game_ctrls_imgs[3];
 let hint_icon_width, hint_icon_height, hint_icon_scale;
 hint_icon.onload = () => {
 	let x_pos, y_pos, radius;
@@ -281,11 +258,8 @@ hint_icon.onload = () => {
 	ctx_1.drawImage(hint_icon, x_pos, y_pos, hint_icon_width, hint_icon_height);
 }
 
-
 // Check icon at the bottom.
-check_icon = new Image();
-check_icon.src = icons_url["submit"];
-
+check_icon = game_ctrls_imgs[4];
 let check_icon_width, check_icon_height;
 check_icon.onload = () => {
 	let radius, check_icon_scale;
@@ -308,86 +282,46 @@ check_icon.onload = () => {
 }
 
 
-
-
-// ----------- DRAW THE DIVIDER BOTTOM LINE AND THE MACHINE ANSW COVER------------
-
-// Bottom divider line that separates the controls.
-let divider_line = () => {
-	// draws a horizontal line across the board
-	let start_x = 0;
-	let start_y = canvas_1.height - row_grid_height + (0.15 * row_grid_height);
-	let end_x = canvas_1.width;
-	let end_y = start_y;
-
-	ctx_2.strokeStyle = '#0b0b0c';
-	ctx_2.lineWidth = 5;
-	ctx_2.beginPath();
-	ctx_2.moveTo(start_x, start_y);
-	ctx_2.lineTo(end_x, end_y);
-	ctx_2.stroke();
-}
-divider_line();
-
-
-
 // ---------- DEFINE THE SCORING PEGS IMAGES FOR THE COLORS OF THE GAME --------------
 
 let pospeg_answ, colpeg_answ;
+let pospeg_answ_width, pospeg_answ_height, pospeg_answ_scale;
+let colpeg_answ_width, colpeg_answ_height, colpeg_answscale;
 window.setTimeout(function() {
 	// Create the scoring pegs but dont draw until check answer is clicked on.
-	let score_cols = [1, 2];
-	let first_col = score_cols[0];
-	let secnd_col = score_cols[1];
 	let rel_height = scoring_img_height / 2 - (0.20 * scoring_img_height);
 
 	// Peg used when the player scores one of the correct positions
-	pospeg_answ  = new Image();
-	pospeg_answ.src = answer_pegs[first_col];
-	let pospeg_answ_width, pospeg_answ_height, pospeg_answ_scale;
-	pospeg_answ.onload = () => {
+	pospeg_answ = answer_images[1];
+	colpeg_answ = answer_images[2];
+	if (initialized) {
 		let pospeg_answ_x, pospeg_answ_y;
 		pospeg_answ_scale = pospeg_answ.width / pospeg_answ.height;
 		pospeg_answ_height = rel_height;
 		pospeg_answ_width = pospeg_answ_height * pospeg_answ_scale;
 
-		answer_images[1] = pospeg_answ;
-
-		let pos_ans_coords = calculateRelativeScorePos(num_board_holes[0], score_row_start, scoring_img_width, scoring_img_height, pospeg_answ_width, pospeg_answ_height);
-
-		answ_poses.push(pos_ans_coords); //Pos ans coords will always be the at index 0
-	}
-
-	// Peg used when the player scores one of the correct colors
-	colpeg_answ  = new Image();
-	colpeg_answ.src = answer_pegs[secnd_col];
-	let colpeg_answ_width, colpeg_answ_height, colpeg_answscale;
-	colpeg_answ.onload = () => {
 		let colpeg_answ_x, colpeg_answ_y;
 		colpeg_answscale = colpeg_answ.width / colpeg_answ.height;
 		colpeg_answ_height = rel_height;
 		colpeg_answ_width = colpeg_answ_height * colpeg_answscale;
 
-		answer_images[2] = colpeg_answ;
+		let pos_ans_coords = calculateRelativeScorePos(num_board_holes[0], score_row_start, scoring_img_width, scoring_img_height, pospeg_answ_width, pospeg_answ_height);
+		let col_ans_coords = calculateRelativeScorePos(num_board_holes[0], score_row_start, scoring_img_width, scoring_img_height, colpeg_answ_width, colpeg_answ_height);
 
-		let pos_ans_coords = calculateRelativeScorePos(num_board_holes[0], score_row_start, scoring_img_width, scoring_img_height, colpeg_answ_width, colpeg_answ_height);
-
-		answ_poses.push(pos_ans_coords); //Col ans coords will always be the at index 0
+		answ_poses.push(pos_ans_coords); //Pos ans coords will always be the at index 0
+		answ_poses.push(col_ans_coords); //Col ans coords will always be the at index 0
 	}
-}, 1000);
+	
+}, 500);
 
 
 
 // -------------------------- EVENT LISTENERS  -------------------------------------
-
-window.addEventListener('load', resize, false);
-window.addEventListener('resize', resize, false);
 canvas_2.addEventListener('click', (e) => {
 	// Get location of the mouseclick event
 	const pos = getMousePosition(canvas_2, e);
 
-	// Check only if the game is in play
-	if (game_state) {
+	if (game_state) {// If the game is in play
 		// Check if the mouseclick was on any of the colors on the side panel. 
 		color_pegs.forEach(color_peg => {
 			let click_result = checkIntersect(pos, color_peg);
@@ -395,16 +329,14 @@ canvas_2.addEventListener('click', (e) => {
 			// Clear any randomly selected colors that have not been played
 			clearSelectedColor(color_peg);
 			if (click_result) {
-				// Add the image selected to col_selected.
+				// Add the image selected to col_selected, draw a circle around selected color
 				col_selected = color_peg;
-
-				// Draw a circle around the color selected and clear any other circles. #777777ba
 				color_peg.drawColorCircle("#4c4f50", 4);
 			}
 		});
 
 		// Identify the curr game row playing, then circle clicked.
-		let circle_clicked = 0; // Identify the circle clicked.
+		let circle_clicked = 0; 
 		let check_circles = row_circles[curr_play_row];
 
 		// Check each row for the current play row.
@@ -414,21 +346,11 @@ canvas_2.addEventListener('click', (e) => {
 				// If clicked on the circle, check if their is a col_selected.
 				if (col_selected) {
 					// Means a color is selected. Create an obj to store details.
-					let curr_col = {
-						img_number : col_selected.img_number,
-						src : color_images[col_selected.img_number],
-						x : circle.x,
-						y : circle.y,
-						radius : circle.radius,
-						width : col_selected.img_width,
-						height : col_selected.img_height
-					};
+					let curr_col = {img_number : col_selected.img_number, src : color_images[col_selected.img_number], x : circle.x, y : circle.y, radius : circle.radius, width : col_selected.img_width, height : col_selected.img_height};
 					row_poses[i] = curr_col;
 
-					// Clear the color circle for the color panel
+					// Clear the color circle for the color panel and set col_selected to false
 					clearSelectedColor(col_selected);
-
-					// Set selected color to false
 					col_selected = false;
 				} else if (col_selected == false) {
 					if (row_poses[i] != 0) {
@@ -473,6 +395,10 @@ canvas_2.addEventListener('click', (e) => {
 
 
 
+
+
+
+//--------------- CLASSES, FUNCTION DECLARATIONS ------------------------------------
 
 
 function GameCircle(x_center, y_center, radius, color, state) {
@@ -541,6 +467,14 @@ function init() {
 
 	ctx_2.width = canvas_size[width];
 	ctx_2.height = canvas_size[height];
+
+
+	// Preload the images
+	color_images = preloadGameImages(peg_urls);
+	four_board = preloadGameImages(board_hole_url);
+	game_ctrls_imgs = preloadGameImages(icons_url);
+	answer_images = preloadGameImages(answer_url);
+	initialized = true;
 }
 
 
@@ -559,8 +493,7 @@ function calculateOptimumCanvas(window_width, window_height){
 			return calculateOptimumCanvas(window_width, temp_height);
 		}
 
-	} else if (window_width >= window_height) {
-		// Keep canvas width fixed
+	} else if (window_width >= window_height) { // Keep canvas width fixed
 		let temp_width = Math.round(temp_height * 9 / 16);
 		canvas_size = {width:temp_width, height:temp_height};
 	}
@@ -608,7 +541,7 @@ function startNewGame() {
 	drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_img_width, hole_img_height, ans_box_width, ans_box_height);
 
 	// Draw the new game answers onto the canvas hidden
-	drawGameAnswers(game_answers);
+	drawGameAnswers(game_answers, row_circles[0]);
 }
 
 
@@ -785,22 +718,16 @@ function calculateRelativeScorePos(num_of_holes, score_row_start, scoring_img_wi
 		} else {
 			corner_y = scoring_img_height / 2 + (0.08 * scoring_img_height);
 		}
-		let rel_pos_coords = {
-			name : 'Relative Coords',
-			x : corner_x,
-			y : corner_y,
-			width : image_width,
-			height : image_height
-		}
+		let rel_pos_coords = {name : 'Relative Coords', x : corner_x, y : corner_y, width : image_width, height : image_height};
 		result.push(rel_pos_coords);
 	}
 	return result;
 }
 
 
-function drawGameAnswers(game_answers) {
+function drawGameAnswers(game_answers, row_array) {
 	// Function that draws the game answers in the answer box.
-	let answer_row = row_circles[0];
+	let answer_row = row_array;
 	answer_row.forEach(function (circle, i) {
 		let x_pos, y_pos, col_peg_img, curr_peg, curr_width, curr_height;
 		col_peg_img = color_images[game_answers[i]];
@@ -810,7 +737,7 @@ function drawGameAnswers(game_answers) {
 		curr_width = curr_peg.img_width;
 		curr_height = curr_peg.img_height;
 
-		//Always draw this on canvas one
+		//Always draw this on canvas
 		ctx_1.drawImage(col_peg_img, x_pos, y_pos, curr_width, curr_height);
 	});
 }
@@ -840,9 +767,11 @@ function drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_im
 	drawImageOnCanvas(ctx_1, hole_img, img_x, img_y, hole_img_width, hole_img_height);
 
 	// Foreground graphic
-	ctx_2.lineWidth = 3;
+	ctx_2.lineWidth = 3.5;
 	ctx_2.fillStyle = '#131313';
+	ctx_2.fillStyle = '#1d0a0a';
 	ctx_2.strokeStyle = '#0b0b0c';
+	ctx_2.strokeStyle = '#040707';
 	ctx_2.fillRect(ans_top_x, ans_top_y, ans_box_width, ans_box_height);
 	ctx_2.strokeRect(ans_top_x, ans_top_y, ans_box_width, ans_box_height);
 
@@ -888,7 +817,7 @@ function checkAnswer() {
 
 		// Draw the pos pegs if any
 		for (let i = num_pos_ans; i > 0; i--) {
-			let pos_img = answer_images[1];
+			let pos_img = pospeg_answ;
 			let width = pos_coords[counter].width;
 			let height = pos_coords[counter].height;
 			let x = pos_coords[counter].x;
@@ -899,7 +828,7 @@ function checkAnswer() {
 
 		// Draw the col pegs if any
 		for (let i = num_col_ans; i > 0; i--) {
-			let col_img = answer_images[2];
+			let col_img = colpeg_answ;
 			let width = col_coords[counter].width;
 			let height = col_coords[counter].height;
 			let x = col_coords[counter].x;
@@ -960,4 +889,33 @@ function revealGameAnswers(player_row_start, row_grid_height, ans_box_width, ans
 		clearFromCanvas(ctx_2, start_x, start_y, clear_size, row_grid_height);
 		start_x += clear_size;
 	}, 50);
+}
+
+
+function preloadGameImages(image_files) {
+	// Preload images into a dictionay where the number is the key and property the image
+	curr_load = 0;
+	total_load = image_files.length;
+	preloaded = false;
+
+	let img_files = {};
+	for (let i = 0; i < image_files.length; i++) {
+		// Create the image object
+		let img = new Image();
+
+		// Load the image object
+		img.onload = function () {
+			curr_load++;
+			if (curr_load == total_load) {
+				preloaded = true;
+			}
+		};
+		// Set the source of the image
+		img.src = image_files[i];
+
+		// Save the image to the color peg dict
+		img_files[i + 1] = img;
+	}
+	// Return the images
+	return img_files;
 }
