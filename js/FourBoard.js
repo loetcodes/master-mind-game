@@ -6,6 +6,7 @@ let canvas_size, canvas_1, canvas_2, ctx_1, ctx_2;
 canvas_1 = document.getElementById('game-bottom');
 canvas_2 = document.getElementById('game-player');
 let width, height;
+let back_box;
 
 
 
@@ -58,6 +59,7 @@ let ctrl_btns_action = {
 };
 
 let ctrl_btns_funcs = {
+	1 : goBackToMenu,
 	2 : startNewGame,
 	4 : checkAnswer
 };
@@ -71,7 +73,6 @@ base_array = generateRandomNumbers(num_board_holes[0]);
 let game_answers = newGameAnswers(base_array, num_board_holes[0]);
 
 
-
 //-------------------INITIALIZE THE GAME VARIABLES-------------------------------------
 
 sizeInitialCanvas(); // Initialize the canvas sizes and widths based on window
@@ -81,6 +82,7 @@ init(); // Initialize the game variables and all the images
 
 //-----------------RUN THE PRELOADER GAME----------------------------------------------
 main(); // Run the game preloader.
+
 
 function main() {
 	// If initialized
@@ -258,6 +260,7 @@ hint_icon.onload = () => {
 	ctx_1.drawImage(hint_icon, x_pos, y_pos, hint_icon_width, hint_icon_height);
 }
 
+
 // Check icon at the bottom.
 check_icon = game_ctrls_imgs[4];
 let check_icon_width, check_icon_height;
@@ -331,7 +334,7 @@ canvas_2.addEventListener('click', (e) => {
 			if (click_result) {
 				// Add the image selected to col_selected, draw a circle around selected color
 				col_selected = color_peg;
-				color_peg.drawColorCircle("#4c4f50", 4);
+				color_peg.drawColorCircle("#797979", 4);
 			}
 		});
 
@@ -769,7 +772,7 @@ function drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_im
 	// Foreground graphic
 	ctx_2.lineWidth = 3.5;
 	ctx_2.fillStyle = '#131313';
-	ctx_2.fillStyle = '#1d0a0a';
+	ctx_2.fillStyle = '#3e3e3e';
 	ctx_2.strokeStyle = '#0b0b0c';
 	ctx_2.strokeStyle = '#040707';
 	ctx_2.fillRect(ans_top_x, ans_top_y, ans_box_width, ans_box_height);
@@ -785,6 +788,36 @@ function drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_im
 function showHint() {
 	// Function that shows a hint of one of the colors featuring in the machine's answer. Hint is colored in green or another color.
 	
+}
+
+function goBackToMenu() {
+	// Function that opens a dialog box and waits for the user to decided if they would like to quit the game.
+	back_box = document.getElementById("back-dialog");
+
+	let box_width = window.innerWidth / 2;
+	let box_height = window.innerHeight / 4;
+
+	back_box.style.width = `${window.innerWidth / 2}` + "px";
+	back_box.style.height = `${window.innerHeight / 4}` + "px";
+	back_box.style.maxWidth = `${canvas_1.width}` + "px";
+
+	if (box_width >= canvas_1.width) {
+		back_box.style.marginLeft = `${0 - canvas_1.width / 2}` + "px";
+	} else {
+		back_box.style.marginLeft = `${0 - box_width / 2}` + "px";
+	}
+	back_box.style.marginTop = `${0 - box_height / 2}` + "px";
+	back_box.style.display = "flex";
+
+	// set game state to false
+	game_state = false;
+}
+
+
+function resumeGameState() {
+	// Function that resumes a game after the back button has been clicked.
+	game_state = true;
+	back_box.style.display = "none";
 }
 
 
