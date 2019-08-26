@@ -8,15 +8,31 @@
 </head>
 <body class="body-content">
 	<div class="top-section">
-		<div class="nav-icons">
+		<!-- <div class="nav-icons">
 			<h1 class="title-text">MASTER MIND</h1>
-		</div>
+		</div> -->
 	</div>
 
-	<canvas id="game-bottom">
-	</canvas>
-	<canvas id="game-player">
-	</canvas>
+	<canvas id="game-bottom"></canvas>
+	<canvas id="game-player"></canvas>
+
+	<!-- <div class="content section back-menu"> -->
+	<div id="back-dialog" class="back-pop-up">
+		<div class="text-box">
+			<p class="text-content">Are you sure you want to quit this game?</p>
+		</div>
+		<div class="selection-options">
+			<a class="nav-link" href="home.html#main-pg" target="">
+				<div class="menu-title load-item initial-load">Yes
+				</div>
+			</a>
+			<a class="nav-link" href="javascript:void(0)" onclick="javascript:resumeGameState()">
+				<div class="menu-title load-item initial-load">No
+				</div>
+			</a>
+		</div>
+	</div>
+	<!-- </div> -->
 
 </body>
 <script type="text/javascript" src="js/FourBoard.js"></script>
