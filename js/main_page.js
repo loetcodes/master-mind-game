@@ -8,16 +8,16 @@ Front/Main page loading
 
 function showPage(id) {
 	let element = document.getElementById(id);
-	element.style.display="flex";
+	element.style.display="grid";
 	// element.style.animation-play-state="paused";
-	// document.getElementById(id).style.display="flex";
+	// document.getElementById(id).style.display="grid";
 }
 
 
 function hidePage(id) {
 	let element = document.getElementById(id);
-	if (element.classList.contains("load-transition")) {
-		element.classList.remove("load-transition");
+	if (element.classList.contains("onstart-load")) {
+		element.classList.remove("onstart-load");
 	}
 	element.style.display="none";
 

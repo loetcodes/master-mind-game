@@ -17,6 +17,12 @@
 	background-size: 205%;
 	background-repeat-x: no-repeat;
 	background-position-x: -412px;
+	
+	background: url("../images/01_Background_maroon.jpg");
+	background-position: top;
+	background-size: 97%;
+	background-repeat-x: repeat;
+	background-position-x: -380px;
 }
 
 
@@ -41,7 +47,7 @@
 	text-align: center;
 	margin: 6% auto;
 	margin-top: 0;
-	font-size: 1.4em;
+	font-size: 3vmin;
 	color: wheat;
 	font-weight: bold;
 	letter-spacing: 0.1em;
@@ -67,6 +73,7 @@ canvas {
 
 #game-bottom {
 	z-index: 0;
+	box-shadow: 1px -1px 20px 12px #000000;
 }
 
 #game-player {
@@ -101,10 +108,10 @@ canvas {
 	margin: auto;
 	text-align: center;
 	text-transform: uppercase;
-	max-width: 200px;
-	padding: 10% 3%;
-	font-size: 2vw;
-	letter-spacing: 0.9vw;
+	max-width: 160px;
+	padding: 9% 0%;
+	font-size: 2.6vmin;
+	letter-spacing: 0.4em;
 	color: wheat;
 	font-weight: bold;
 	border-radius: 6px;
@@ -125,7 +132,7 @@ canvas {
 .selection-options {
 	display: flex;
 	flex-direction: row;
-	justify-content: space-around;
+	/*justify-content: space-around;*/
 }
 
 .load-item {
@@ -135,6 +142,9 @@ canvas {
 	animation-timing-function: linear;
 	animation-fill-mode: forwards;
 }
+
+
+
 
 
 @media screen and (min-width: 801px) {
@@ -150,7 +160,8 @@ canvas {
 	}
 
 	.text-box {
-		margin: 3% auto;
+		margin: 5% auto;
+		font-size: 1.4em;
 	}
 
 	.text-content {
@@ -158,11 +169,18 @@ canvas {
 	}
 
 	.menu-title {
-		font-size: 1.2em;
+		font-size: 1em;
 		letter-spacing: 0.8em;
+		padding: 8% 3%;
+	}
+
+	.selection-options {
+		margin-bottom: 5%;
 	}
 
 }
+
+
 
 @keyframes grow-fade-reduce {
 	0% { 
