@@ -4,6 +4,7 @@
 
 /*Default styling for devices below 800px*/
 
+@import url('https://fonts.googleapis.com/css?family=Livvic&display=swap');
 
 .body-content {
 	height: 100vh;
@@ -23,6 +24,7 @@
 	background-size: 97%;
 	background-repeat-x: repeat;
 	background-position-x: -380px;
+	font-family: 'Livvic', sans-serif;
 }
 
 
@@ -45,18 +47,23 @@
 .text-box {
 	width: 75%;
 	text-align: center;
-	margin: 6% auto;
+	margin: 3% auto;
 	margin-top: 0;
-	font-size: 3vmin;
+	font-size: 3.4vmin;
 	color: wheat;
-	font-weight: bold;
 	letter-spacing: 0.1em;
+}
+
+.emphasis-num {
+	font-weight: bold;
+	font-size: 3.5vmin;
 }
 
 
 .text-content {
-	margin: auto;
+	/*margin: auto;*/
 }
+
 
 canvas {
 	border: 0px solid #0b0b0c;
@@ -71,15 +78,18 @@ canvas {
 	z-index: 0;
 }
 
+
 #game-bottom {
 	z-index: 0;
 	box-shadow: 1px -1px 20px 12px #000000;
 }
 
+
 #game-player {
 	background: none;
 	z-index: 1;
 }
+
 
 #back-dialog {
 	display: none;
@@ -88,13 +98,38 @@ canvas {
 	left: 50%;
 	flex-direction: column;
 	justify-content: space-evenly;
+	z-index: 3;
 }
 
-.back-pop-up {
+
+#hint-dialog {
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	flex-direction: column;
+	justify-content: space-evenly;
+	/*justify-content: flex-start;*/
+	z-index: 2;
+}
+
+
+.pop-up-box {
 	margin: auto;
 	background: #3c0203f5;
 	border-radius: 10px;
-	z-index: 2;
+}
+
+
+.game-icon {
+	width: 80%;
+	width: 15vmin;
+	max-width: 55px;
+	height: auto;
+	margin: 5% auto;
+	margin-bottom: 0px;
+	filter: drop-shadow(0px 0px 10px #000);
+	filter: drop-shadow(0px 0px 25px #a5a3a3);
 }
 
 .nav-link {
