@@ -12,7 +12,7 @@ let peg_colors = 8;
 let peg_urls = ["./images/circle_pegs/04_Peg_navyblue.png", "./images/circle_pegs/04_Peg_brown.png", "./images/circle_pegs/04_Peg_green.png", "./images/circle_pegs/04_Peg_teal.png", "./images/circle_pegs/04_Peg_purple.png", "./images/circle_pegs/04_Peg_lightgold.png", "./images/circle_pegs/04_Peg_pink.png", "./images/circle_pegs/04_Peg_red.png"];
 
 let board_hole_url = ["./images/02_Line_4.png", "./images/03_Answer_box_4.png"];
-let icons_url = ["./images/06_Buttons_back.png", "./images/06_Buttons_new_game.png", "./images/06_Buttons_hint.png", "./images/06_Buttons_check_answer.png", "./images/09_4_stars_full_gold.png"];
+let icons_url = ["./images/06_Buttons_back.png", "./images/06_Buttons_new_game.png", "./images/06_Buttons_hint.png", "./images/06_Buttons_check_answer.png", "./images/09_3_Stars_black.png", "./images/09_3_Stars_gold.png"];
 let answer_url = ["./images/05_Answer_red_2.png", "./images/05_Answer_white_2.png"];
 
 
@@ -39,6 +39,7 @@ let color_panel = 0;
 let score_row_start = 0;
 let player_row_start = 0;
 let right_panel_start = 0;
+let stars_x, stars_y;
 
 
 let color_pegs = []; // stores the color pegs shapes
@@ -280,7 +281,7 @@ check_icon.onload = () => {
 }
 
 
-// Stars scoring image
+// Stars scoring image black filled
 stars_back = game_ctrls_imgs[5];
 let stars_back_width, stars_back_height, stars_back_scale;
 stars_back.onload = () => {
@@ -288,16 +289,38 @@ stars_back.onload = () => {
 	let temp_no = 5;
 
 	stars_back_scale = stars_back.width / stars_back.height;
-	stars_back_height = row_grid_height - (0.50 * row_grid_height);
+	stars_back_height = row_grid_height - (0.45 * row_grid_height);
 	stars_back_width = stars_back_height * stars_back_scale;
 
-	x_pos = (0.02 * canvas_1.width); // 2 percent from the edge
+	x_pos = (0.045 * canvas_1.width); // 2 percent from the edge
 	y_pos = (row_grid_height - stars_back_height) / 2;
+
+	stars_x = x_pos;
+	stars_y = y_pos;
 
 	// Draw the icon image
 	ctx_1.drawImage(stars_back , x_pos, y_pos, stars_back_width, stars_back_height);
-
 }
+
+
+// Stars scoring image gold filled
+// stars_back = game_ctrls_imgs[6];
+// let stars_back_width, stars_back_height, stars_back_scale;
+// stars_back.onload = () => {
+// 	let x_pos, y_pos, radius;
+// 	let temp_no = 5;
+
+// 	stars_back_scale = stars_back.width / stars_back.height;
+// 	stars_back_height = row_grid_height - (0.50 * row_grid_height);
+// 	stars_back_width = stars_back_height * stars_back_scale;
+
+// 	x_pos = (0.02 * canvas_1.width); // 2 percent from the edge
+// 	y_pos = (row_grid_height - stars_back_height) / 2;
+
+// 	// Draw the icon image
+// 	ctx_1.drawImage(stars_back , x_pos, y_pos, stars_back_width, stars_back_height);
+
+// }
 
 
 
@@ -542,26 +565,29 @@ function startNewGame() {
 	// Clear the canvas for a new game, Initialize new variables
 	clearFromCanvas(ctx_2, 0, 0, canvas_2.width, canvas_2.height);
 
+	// Create new game answers
+	let new_base = set_answ;
+	set_answ = newGameAnswers(new_base, num_board_holes);
+
 	// Return game states to initial states
-	game_state = true;
 	row_poses = [0, 0, 0, 0];
 	curr_play_row = 10;
 	player_answers = [];
 	col_selected = false;
 	total_hints = num_board_holes - 1;
+	hints_given = [];
+	game_state = true;
 
 	// Return the check answer back to the start
 	moveCheckButton(game_ctrls[4], curr_play_row);
-
-	// Create new game answers
-	let new_base = set_answ;
-	set_answ = newGameAnswers(new_base, num_board_holes);
 
 	// Clear current game answers from canvas, drawing background graphics on ctx_1 including peg holder
 	drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_img_width, hole_img_height, ans_box_width, ans_box_height);
 
 	// Draw the new game answers onto the canvas hidden
 	drawGameAnswers(set_answ, row_circles[0]);
+
+	// Remove the stars
 }
 
 
@@ -811,19 +837,23 @@ function drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_im
 function createDialogBoxSize() {
 	// Function that creates the size of the dialog box based on the window view.
 	let dialog_dims = {};
+	let dialog_width, dialog_height;
 
-	let dialog_width = window.innerWidth / 2;
-	let dialog_height = window.innerHeight / 4;
+	let temp_width = window.innerWidth / 2;
+	let temp_height = window.innerHeight / 4
 
+	if (temp_width >= canvas_1.width) {
+		dialog_width = temp_width * 0.50;
+		dialog_height = window.innerHeight / 4;
+	} else {
+		dialog_width = temp_width;
+		dialog_height = window.innerHeight / 4;
+	}
 	dialog_dims["dialog_width"] = dialog_width;
 	dialog_dims["dialog_height"] = dialog_height;
 	dialog_dims["max_width"] = canvas_1.width;
 
-	if (dialog_width >= canvas_1.width) {
-		dialog_dims["margin_left"] = 0 - canvas_1.width / 2;
-	} else {
-		dialog_dims["margin_left"] = 0 - dialog_width / 2;
-	}
+	dialog_dims["margin_left"] = 0 - dialog_width / 2;
 	dialog_dims["margin_top"] = 0 - dialog_height / 2;
 
 	return dialog_dims;
@@ -873,7 +903,7 @@ function showHint() {
 		}
 
 		// Display the box if the game state is true, set game to false
-		hint_box.style.display = "flex";
+		hint_box.style.display = "grid";
 		game_state = false;
 	}	
 }
@@ -965,20 +995,19 @@ function checkAnswer() {
 		// If all 4 pegs, game_state should be false. If not, move to the next row, clear the player answers, move the submit button to the next row.
 		if (num_pos_ans == num_board_holes) {
 			game_state = false;
-			// Reveal machine answers at this point
+			// Reveal answers and rate winner accordingly
 			revealGameAnswers(player_row_start, row_grid_height, ans_box_width, ans_box_height);
+			scoreGamePlayed(stars_x, stars_y, curr_play_row, stars_back_height);
+
 		} else if(curr_play_row > 1) {
 			// Move to the next row, slide the submit answer as well.
 			curr_play_row -= 1;
 			moveCheckButton(game_ctrls[4], curr_play_row);
 		} else {
+			// Reset play row and game_state, reveal answers, return check box to start
 			curr_play_row = 10;
 			game_state = false;
-
-			// Reveal machine answers.
 			revealGameAnswers(player_row_start, row_grid_height, ans_box_width, ans_box_height);
-
-			// At new game, return the check answer to the current row
 			moveCheckButton(game_ctrls[4], curr_play_row);
 		}
 		row_poses = [0, 0, 0, 0]; // reset the row poses to 0
@@ -1014,6 +1043,49 @@ function revealGameAnswers(player_row_start, row_grid_height, ans_box_width, ans
 		clearFromCanvas(ctx_2, start_x, start_y, clear_size, row_grid_height);
 		start_x += clear_size;
 	}, 50);
+}
+
+
+function scoreGamePlayed(stars_x, stars_y, curr_play_row, stars_back_height) {
+	// Function that scores the current game played
+	let stars_img = game_ctrls_imgs[6];
+	let stars_img_width, stars_img_height, stars_img_scale;
+
+	console.log("The stars_back height is:", stars_back_height);
+
+	stars_img.onload = () => {
+		let x_pos, y_pos;
+		let dest_width, dest_height;
+
+		stars_img_scale = stars_img.width / stars_img.height;
+		stars_img_height = stars_back_height;
+		stars_img_width = stars_img_height * stars_img_scale;
+
+		x_pos = stars_x;
+		y_pos = stars_y;
+
+		dest_height = stars_img_height;
+
+		if (curr_play_row <= 5) {
+			// Played in less than 5 rows, hence give 3 stars
+			dest_width = stars_img_width * 1.0;
+		} else if (curr_play_row <= 8) {
+			// Played in less than 8 rows, hence give 2 stars
+			dest_width = stars_img_width * 0.66;
+		} else {
+			// Played in less than 10 rows, hence give 1 star
+			dest_width = stars_img_width * 0.33;
+		}
+
+		console.log("The x_pos, y_pos, stars_img_width, stars_img_height:",x_pos, y_pos, stars_img_width, stars_img_height);
+		console.log("The stars_img height is:", stars_img_height);
+		console.log("The stars_img width is:", stars_img_width);
+		console.log("The stars_img destination width is:", dest_width);
+
+		// Draw the icon image
+		ctx_2.drawImage(stars_img, 0, 0, stars_img_width, stars_img_height, x_pos, y_pos,dest_width, dest_height);
+	}
+
 }
 
 
