@@ -1,6 +1,5 @@
 /* Javascript for MasterMind 2.0 */
 
-
 // Declare the two canvasses and the respective context.
 let width, height;
 let canvas_size, canvas_1, canvas_2, ctx_1, ctx_2;
@@ -22,6 +21,7 @@ let num_board_holes = 4;
 let back_box;
 let hint_box;
 let total_hints = num_board_holes - 1;
+let total_rows = 10;
 let hints_given = [];
 
 
@@ -184,7 +184,7 @@ hole_img.onload = function() {
 // BUTTONS FOR BACK, NEW GAME, HINT, CHECK ANSWER, STARS SCORES--------------
 
 // back game icon located far left of the canvas
-let back_icon, newgame_icon, hint_icon, check_icon, stars_back;
+let back_icon, newgame_icon, hint_icon, check_icon, stars_back, stars_img;
 
 back_icon = game_ctrls_imgs[1];
 let back_icon_width, back_icon_height, back_icon_scale;
@@ -303,25 +303,9 @@ stars_back.onload = () => {
 }
 
 
-// Stars scoring image gold filled
-// stars_back = game_ctrls_imgs[6];
-// let stars_back_width, stars_back_height, stars_back_scale;
-// stars_back.onload = () => {
-// 	let x_pos, y_pos, radius;
-// 	let temp_no = 5;
-
-// 	stars_back_scale = stars_back.width / stars_back.height;
-// 	stars_back_height = row_grid_height - (0.50 * row_grid_height);
-// 	stars_back_width = stars_back_height * stars_back_scale;
-
-// 	x_pos = (0.02 * canvas_1.width); // 2 percent from the edge
-// 	y_pos = (row_grid_height - stars_back_height) / 2;
-
-// 	// Draw the icon image
-// 	ctx_1.drawImage(stars_back , x_pos, y_pos, stars_back_width, stars_back_height);
-
-// }
-
+// // Stars image gold filled
+// stars_img = game_ctrls_imgs[6];
+// let stars_img_width, stars_img_height, stars_img_scale;
 
 
 
@@ -587,7 +571,7 @@ function startNewGame() {
 	// Draw the new game answers onto the canvas hidden
 	drawGameAnswers(set_answ, row_circles[0]);
 
-	// Remove the stars
+	// Clear the rated stars of the previous game.
 }
 
 
@@ -614,12 +598,6 @@ function drawCircle(context, x, y, radius, color) {
 	ctx_2.arc(x, y, radius, 0, 2 * Math.PI);
 	ctx_2.strokeStyle = color;
 	ctx_2.stroke();
-}
-
-
-function clearFromCanvas(context, top_x, top_y, width, height) {
-	// Clear the canvas elements within a defined rectangle.
-	context.clearRect(top_x, top_y, width, height);
 }
 
 
@@ -698,6 +676,12 @@ function generateRandomColors(base_array) {
 
 function drawImageOnCanvas(context, image, x_value, y_value, image_width, image_height) {
 	context.drawImage(image, x_value, y_value, image_width, image_height);
+}
+
+
+function clearFromCanvas(context, top_x, top_y, width, height) {
+	// Clear the canvas elements within a defined rectangle.
+	context.clearRect(top_x, top_y, width, height);
 }
 
 
@@ -1047,50 +1031,42 @@ function revealGameAnswers(player_row_start, row_grid_height, ans_box_width, ans
 
 
 function scoreGamePlayed(stars_x, stars_y, curr_play_row, stars_back_height) {
-	// Function that scores the current game played
+	// Function that scores the current game played according to 3 star system
+	// Stars image gold filled
 	let stars_img = game_ctrls_imgs[6];
-	let stars_img_width, stars_img_height, stars_img_scale;
+	let x_pos = stars_x;
+	let y_pos = stars_y;
 
-	console.log("The stars_back height is:", stars_back_height);
+	let sourc_width, sourc_height, img_scale;
+	let dest_width, dest_height;
 
-	stars_img.onload = () => {
-		let x_pos, y_pos;
-		let dest_width, dest_height;
+	sourc_height = stars_img.height;
+	sourc_width = stars_img.width;
 
-		stars_img_scale = stars_img.width / stars_img.height;
-		stars_img_height = stars_back_height;
-		stars_img_width = stars_img_height * stars_img_scale;
+	img_scale = sourc_width / sourc_height;
+	dest_height = stars_back_height;
+	dest_width = dest_height * img_scale;
 
-		x_pos = stars_x;
-		y_pos = stars_y;
-
-		dest_height = stars_img_height;
-
-		if (curr_play_row <= 5) {
-			// Played in less than 5 rows, hence give 3 stars
-			dest_width = stars_img_width * 1.0;
-		} else if (curr_play_row <= 8) {
-			// Played in less than 8 rows, hence give 2 stars
-			dest_width = stars_img_width * 0.66;
-		} else {
-			// Played in less than 10 rows, hence give 1 star
-			dest_width = stars_img_width * 0.33;
-		}
-
-		console.log("The x_pos, y_pos, stars_img_width, stars_img_height:",x_pos, y_pos, stars_img_width, stars_img_height);
-		console.log("The stars_img height is:", stars_img_height);
-		console.log("The stars_img width is:", stars_img_width);
-		console.log("The stars_img destination width is:", dest_width);
-
-		// Draw the icon image
-		ctx_2.drawImage(stars_img, 0, 0, stars_img_width, stars_img_height, x_pos, y_pos,dest_width, dest_height);
+	if (curr_play_row > 5) {
+		// Played in less than 5 rows, hence give 3 stars
+		dest_width *= 1.0;
+	} else if (curr_play_row > 3 ) {
+		// Played in less than 8 rows, hence give 2 stars
+		sourc_width *= 0.66;
+		dest_width *= 0.66;
+	} else {
+		// Played in less than 10 rows, hence give 1 star
+		sourc_width *= 0.33;
+		dest_width *= 0.33;
 	}
 
+	// Draw the icon image
+	ctx_2.drawImage(stars_img, 0, 0, sourc_width, sourc_height, x_pos, y_pos, dest_width, dest_height);
 }
 
 
 function preloadGameImages(image_files) {
-	// Preload images into a dictionay where the number is the key and property the image
+	// Preload images into a dictionary where the number is the key and property the image
 	curr_load = 0;
 	total_load = image_files.length;
 	preloaded = false;
