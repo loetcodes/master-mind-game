@@ -303,12 +303,6 @@ stars_back.onload = () => {
 }
 
 
-// // Stars image gold filled
-// stars_img = game_ctrls_imgs[6];
-// let stars_img_width, stars_img_height, stars_img_scale;
-
-
-
 // ---------- DEFINE THE SCORING PEGS IMAGES FOR THE COLORS OF THE GAME --------------
 
 let pospeg_answ, colpeg_answ;
@@ -340,6 +334,7 @@ window.setTimeout(function() {
 	}
 	
 }, 500);
+
 
 
 

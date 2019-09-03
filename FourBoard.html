@@ -4,13 +4,11 @@
 	<title>MasterMind 2.0</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="css/preloader.css">
 	<link rel="stylesheet" type="text/css" href="css/board.css">
 </head>
-<body class="body-content">
+<body id="main-body" class="body-content">
 	<div class="top-section">
-		<!-- <div class="nav-icons">
-			<h1 class="title-text">MASTER MIND</h1>
-		</div> -->
 	</div>
 
 	<canvas id="game-bottom"></canvas>
@@ -36,24 +34,43 @@
 	<!-- Hint icon box -->
 	<div id="hint-dialog" class="pop-up-box">
 		<div class="text-box box-column">
-			<!-- <p class="text-content">Hint</p> -->
 			<p class="text-content"><span id="hint-num" class="emphasis-num"> 3</span> hint(s) left</p>
 			<img id="hint-img" class="game-icon" src="images/08_X-Icon.png" alt="hint image">
-			<!-- <p class="text-content"><em><span id="hint-num" class="emphasis-num"> 3</span></em> hint(s) left</p> -->
 		</div>
 
 
 		<div class="selection-options">
 			<a class="nav-link" href="javascript:void(0)" onclick="javascript:resumeGameState('hint-dialog')">
-				<!-- <div class="menu-title load-item initial-load">Close
-				</div> -->
 				<div class="text-content load-item initial-load">x
 				</div>
-				<!-- <img class="game-icon load-item initial-load" src="images/08_X-Icon.png" alt="close-button"> -->
 			</a>
 		</div>
 	</div>
 
+	<!-- CSS Preloader -->
+	<div id="preloader" class="load-wrapper">
+		<div class="loader-back"></div>
+
+		<div id="loader-box">
+			<div class="loader-ball">
+		      <div class="ball ball-first" id="ball-1"></div>
+		    </div>
+		    <div class="loader-ball">
+		      <div class="ball ball-second" id="ball-2"></div>
+		    </div>
+		    <div class="loader-ball">
+		      <div class="ball ball-first" id="ball-3"></div>
+		    </div>
+		    <div class="loader-ball">
+		      <div class="ball ball-second" id="ball-4"></div>
+		    </div>
+		</div>
+
+	</div>
+
 </body>
-<script type="text/javascript" src="js/FourBoard.js"></script>
+
+<script type="text/javascript" src="js/preload.js"></script>
+<script type="text/javascript" src="js/fourBoard.js"></script>
+
 </html>
