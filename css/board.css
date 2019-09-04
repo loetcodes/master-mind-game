@@ -205,16 +205,17 @@ canvas {
 }
 
 #hint-dialog .selection-options {
-	margin-top: 5%;
-	margin-right: 5%;
+	margin-right: 25%;
 }
 
 #hint-dialog .nav-link {
+	width: 100%;
 	height: max-content;
 	font-weight: 600;
 	text-align: center;
 	color: wheat;
-	margin: 5% auto;
+	margin: 0% auto;
+	font-size: 5vmin;
 }
 
 

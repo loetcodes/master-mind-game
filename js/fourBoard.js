@@ -100,11 +100,21 @@ for (let k = 1; k <= 8; k++) { // Draw left Side panel of colors
 	let img_width = img_height;
 	color_panel = img_width + (0.02 * canvas_1.width) * 2;
 
+	// Calculate spread gap from height minus the answer box, and bottom control panel
+	let gap_y = (canvas_1.height - row_grid_height * 3) / 8;
+
 	x_pos = (0.02 * canvas_1.width); // 2 percent from the edge
 	y_pos = k * row_grid_height + (row_grid_height - img_height) / 2;
+
+	// Additional gap added to y_pos
+	y_pos += ((gap_y / 2 )* (k - 1)) / 2;
+
 	radius = (img_width) / 2;
 
-	x_pos_center = x_pos + radius;
+	// Additional click detection allowance
+	radius += 5;
+
+	x_pos_center = x_pos + radius - 5;
 	y_pos_center = y_pos + img_height / 2;
 
 	// Create a color peg object used later for detection of click, push to color pegs array. 
@@ -144,20 +154,21 @@ let hole_img, hole_img_width, hole_img_height, hole_img_scale;
 let ans_box_width, ans_box_height, ans_top_x, ans_top_y;
 
 hole_img = four_board[1];
-hole_img_height = row_grid_height - (0.20 * row_grid_height);
+// hole_img_height = row_grid_height - (0.20 * row_grid_height);
 hole_img.onload = function() {
 	let x_pos, y_pos;
 	hole_img_scale = hole_img.width / hole_img.height;
-	hole_img_height = row_grid_height - (0.20 * row_grid_height);
+	hole_img_height = row_grid_height - (0.12 * row_grid_height);
 	hole_img_width = hole_img_height * hole_img_scale;
 
-	ans_box_width = hole_img_width + (0.03 * canvas_1.width) * 2;
-	ans_box_height = hole_img_height + (0.05 * hole_img_height) * 2;
+	ans_box_width = hole_img_width + (0.015 * canvas_1.width);
+	ans_box_height = hole_img_height + (0.06 * hole_img_height) * 2;
 
 	window.setTimeout(function() {
-		player_row_start = score_row_start + scoring_img_width + (0.02 * canvas_1.width) * 2;
+		// 1 percent edge allowance removed to center
+		player_row_start = canvas_1.width - color_panel - hole_img_width + (0.01 * canvas_1.width) / 2;
 		x_pos = player_row_start;
-
+		
 		for (let i = 0; i <= 10; i++) {
 			// Compute the y value for the images
 			y_pos = i * row_grid_height + (row_grid_height - hole_img_height) / 2;
@@ -178,6 +189,7 @@ hole_img.onload = function() {
 		}
 
 	}, 200);
+
 }
 
 
@@ -354,7 +366,7 @@ canvas_2.addEventListener('click', (e) => {
 			if (click_result) {
 				// Add the image selected to col_selected, draw a circle around selected color
 				col_selected = color_peg;
-				color_peg.drawColorCircle("#797979", 4);
+				color_peg.drawColorCircle(3, "#797979", 4);
 			}
 		});
 
@@ -380,8 +392,12 @@ canvas_2.addEventListener('click', (e) => {
 						// Clicked on a circle with a color, hence remove that color.
 						let top_x = circle.x - circle.radius;
 						let top_y = circle.y - circle.radius;
-						let clear_width = row_poses[i].width + 5;
-						let clear_height = row_poses[i].height + 5;
+						// let clear_width = row_poses[i].width + 5;
+						// let clear_height = row_poses[i].height + 5;
+
+
+						let clear_width = circle.radius * 2;
+						let clear_height = circle.radius * 2;
 
 						clearFromCanvas(ctx_2, top_x, top_y, clear_width, clear_height);
 						row_poses[i] = 0; // set to zero as a result
@@ -393,7 +409,8 @@ canvas_2.addEventListener('click', (e) => {
 		// Draw each pos based on row_poses, in the correct new position.
 		for (let item of row_poses) {
 			if (item !== 0) {
-				ctx_2.drawImage(item.src, item.x - item.radius + 2, item.y - item.radius, item.width, item.height);
+				// ctx_2.drawImage(item.src, item.x - item.radius + 2, item.y - item.radius, item.width, item.height);
+				ctx_2.drawImage(item.src, item.x - item.width / 2, item.y - item.height / 2, item.width, item.height);
 			}
 		}
 	}
@@ -441,12 +458,13 @@ function ColorCircle(x_center, y_center, radius, img_number, img_width, img_heig
 	this.color = 'red';
 }
 
-ColorCircle.prototype.drawColorCircle = function(color = this.color, size = 1) {
+ColorCircle.prototype.drawColorCircle = function(value = 0, color = this.color, size = 1) {
 	// Draw a circle in a position (x, y).
+	let curr_radius = this.radius - value;
 	ctx_2.beginPath();
 	ctx_2.lineWidth = size;
 	ctx_2.strokeStyle = color;
-	ctx_2.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+	ctx_2.arc(this.x, this.y, curr_radius, 0, 2 * Math.PI);
 	ctx_2.stroke();
 };
 
@@ -599,33 +617,37 @@ function drawCircle(context, x, y, radius, color) {
 function clearSelectedColor(selected) {
 	// Function that clears a selected color, it takes a color_peg as input
 	// Clear the color circle for the color panel
-	let top_x = selected.x - selected.radius - (0.10 * selected.img_width);
-	let top_y = selected.y - selected.radius - (0.10 * selected.img_height);
-	let clear_width = selected.img_width + (0.20 * selected.img_width);
-	let clear_height = selected.img_height + (0.20 * selected.img_height);
+
+	let top_x = selected.x - selected.radius;
+	let top_y = selected.y - selected.radius;
+
+	let clear_width = selected.radius * 2;
+	let clear_height = selected.radius * 2;
 	clearFromCanvas(ctx_2, top_x, top_y, clear_width, clear_height);
 }
 
 
 function createRowCircles(top_x, top_y, curr_height, curr_width, no_of_circles, game_state) {
-	// Create an array of circle objects.
-	let d = curr_width / no_of_circles;
-	let x_allowance = d * 0.2;
-	d -= x_allowance;
-	let r = d / 2;
-
+	// Returns an array of row circles representing the possible play positions.
 	let row_circles = [];
 	let x_center, y_center;
+
+	let outer_allowance = curr_height * 0.15;
+	let diameter = curr_height - outer_allowance;
+	let radius = diameter / 2;
+	let spacing = (curr_width - (diameter * no_of_circles)) / 4;
+	
 	y_center = top_y + curr_height / 2;
 
 	// Calculate the center of the circle object, create the circle object, pushing to row_circles
 	for (let j = 1; j <= num_board_holes; j++) {
-		x_center = (top_x + x_allowance / 2 + r) + (d +  x_allowance) * (j - 1);
-		let circle_object = new GameCircle(x_center, y_center, r, "blue", false);
+		x_center = (top_x  + spacing / 2 + radius) + (diameter +  spacing) * (j - 1);
+
+		let circle_object = new GameCircle(x_center, y_center, radius, "blue", false);
 		row_circles.push(circle_object);
 
 		// Draw the circle. Remove the draw function once everything is outlined. FINAL STEPS
-		drawCircle(ctx_2, x_center, y_center, r, "");
+		drawCircle(ctx_2, x_center, y_center, radius, "");
 	}
 	return row_circles;
 }
@@ -762,11 +784,13 @@ function drawGameAnswers(set_answ, row_array) {
 	answer_row.forEach(function (circle, i) {
 		let x_pos, y_pos, col_peg_img, curr_peg, curr_width, curr_height;
 		col_peg_img = color_images[set_answ[i]];
-		x_pos = circle.x - circle.radius;
-		y_pos = circle.y - circle.radius;
+
 		curr_peg = color_pegs[i];
 		curr_width = curr_peg.img_width;
 		curr_height = curr_peg.img_height;
+
+		x_pos = circle.x - curr_peg.img_width / 2;
+		y_pos = circle.y - curr_peg.img_height / 2;
 
 		//Always draw this on canvas
 		ctx_1.drawImage(col_peg_img, x_pos, y_pos, curr_width, curr_height);
@@ -776,17 +800,14 @@ function drawGameAnswers(set_answ, row_array) {
 
 function drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_img_width, hole_img_height, ans_box_width, ans_box_height){
 	// Draws the game answers box that stores the machines answers.
-	let ans_top_x = player_row_start - (0.03 * canvas_1.width);
+	let ans_top_x = player_row_start - (0.01 * canvas_1.width);
 	let ans_top_y = (row_grid_height - hole_img_height) / 2 - (0.04 * row_grid_height);
 
 	// Clear the bottom canvas graphics if any
 	clearFromCanvas(ctx_1, ans_top_x, ans_top_y, ans_box_width, row_grid_height);
 
 	// Draw the Background graphic color
-	ctx_1.lineWidth = 3;
-	ctx_1.fillStyle = '#141415e0';
-	ctx_1.fillStyle = '#0c0c0c';
-	ctx_1.fillStyle = '#0b0b0ce3';
+	ctx_1.lineWidth = 2.5;
 	ctx_1.fillStyle = '#0e0e0ecc';
 	ctx_1.strokeStyle = '#040707';
 	ctx_1.fillRect(ans_top_x, ans_top_y, ans_box_width, ans_box_height);
@@ -798,9 +819,10 @@ function drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_im
 	drawImageOnCanvas(ctx_1, hole_img, img_x, img_y, hole_img_width, hole_img_height);
 
 	// Foreground graphic
-	ctx_2.lineWidth = 3.5;
+	ctx_2.lineWidth = 3;
 	ctx_2.fillStyle = '#131313';
 	ctx_2.fillStyle = '#3e3e3e';
+	ctx_2.fillStyle = '#222226';
 	ctx_2.strokeStyle = '#0b0b0c';
 	ctx_2.strokeStyle = '#040707';
 	ctx_2.fillRect(ans_top_x, ans_top_y, ans_box_width, ans_box_height);
