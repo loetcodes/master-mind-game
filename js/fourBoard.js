@@ -555,39 +555,6 @@ function resize(){
 }
 
 
-function startNewGame() {
-	// Close any dialog boxes for hint and go back
-	resumeGameState('hint-dialog', 'back-dialog');
-
-	// Clear the canvas for a new game, Initialize new variables
-	clearFromCanvas(ctx_2, 0, 0, canvas_2.width, canvas_2.height);
-
-	// Create new game answers
-	let new_base = set_answ;
-	set_answ = newGameAnswers(new_base, num_board_holes);
-
-	// Return game states to initial states
-	row_poses = [0, 0, 0, 0];
-	curr_play_row = 10;
-	player_answers = [];
-	col_selected = false;
-	total_hints = num_board_holes - 1;
-	hints_given = [];
-	game_state = true;
-
-	// Return the check answer back to the start
-	moveCheckButton(game_ctrls[4], curr_play_row);
-
-	// Clear current game answers from canvas, drawing background graphics on ctx_1 including peg holder
-	drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_img_width, hole_img_height, ans_box_width, ans_box_height);
-
-	// Draw the new game answers onto the canvas hidden
-	drawGameAnswers(set_answ, row_circles[0]);
-
-	// Clear the rated stars of the previous game.
-}
-
-
 function getMousePosition(canvas, evt) {
 	// Get the mouse position, accounting for the offset resulting from the canvas location being in the middle.
 	let bounding_area = canvas.getBoundingClientRect();
@@ -617,7 +584,6 @@ function drawCircle(context, x, y, radius, color) {
 function clearSelectedColor(selected) {
 	// Function that clears a selected color, it takes a color_peg as input
 	// Clear the color circle for the color panel
-
 	let top_x = selected.x - selected.radius;
 	let top_y = selected.y - selected.radius;
 
@@ -910,6 +876,39 @@ function showHint() {
 }
 
 
+function startNewGame() {
+	// Close any dialog boxes for hint and go back
+	resumeGameState('hint-dialog', 'back-dialog');
+
+	// Clear the canvas for a new game, Initialize new variables
+	clearFromCanvas(ctx_2, 0, 0, canvas_2.width, canvas_2.height);
+
+	// Create new game answers
+	let new_base = set_answ;
+	set_answ = newGameAnswers(new_base, num_board_holes);
+
+	// Return game states to initial states
+	row_poses = [0, 0, 0, 0];
+	curr_play_row = 10;
+	player_answers = [];
+	col_selected = false;
+	total_hints = num_board_holes - 1;
+	hints_given = [];
+	game_state = true;
+
+	// Return the check answer back to the start
+	moveCheckButton(game_ctrls[4], curr_play_row);
+
+	// Clear current game answers from canvas, drawing background graphics on ctx_1 including peg holder
+	drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_img_width, hole_img_height, ans_box_width, ans_box_height);
+
+	// Draw the new game answers onto the canvas hidden
+	drawGameAnswers(set_answ, row_circles[0]);
+
+	// Clear the rated stars of the previous game.
+}
+
+
 function goBackToMenu() {
 	// Function that opens a dialog box providing options to quit or continue with the game.
 	let box_dims = createDialogBoxSize();
@@ -938,7 +937,17 @@ function resumeGameState(...element_ids) {
 	// Function that takes an element_id and puts its display to none, based on any parameters.
 	for (let arg_id of element_ids) {
 		let element = document.getElementById(arg_id);
-		element.style.display = "none";
+		element.classList.remove("load-dialog");
+		element.classList.add("unload-dialog");
+
+		window.setTimeout(() => {
+			element.style.display = "none";
+			element.classList.remove("unload-dialog");
+			element.classList.add("load-dialog");
+		}, 1000);
+
+		// element.style.display = "none";
+		// element.className += "";
 	}
 	game_state = true;
 }

@@ -27,7 +27,6 @@
 	font-family: 'Livvic', sans-serif;
 }
 
-
 .top-section {
 	grid-column: 1;
 	grid-row: 1;
@@ -38,11 +37,9 @@
 	font-size: 1em;
 }
 
-
 .title-text {
 	font-size: 1em;
 }
-
 
 .text-box {
 	width: 75%;
@@ -66,12 +63,10 @@
 	font-size: 3.2vmin;
 }
 
-
 .text-content {
 	margin: auto;
 	line-height: 4vmin;
 }
-
 
 canvas {
 	border: 0px solid #0b0b0c;
@@ -94,16 +89,6 @@ canvas {
 #game-player {
 	background: none;
 	z-index: 1;
-}
-
-.pop-up-box {
-	margin: auto;
-	/*background: #7b0202;*/
-	background: #505050f0;
-	background: #3c0203f5;
-	border-radius: 10px;
-	border: 2px solid #5f0305;
-	box-shadow: 0px 0px 5px 6px #0c0101;
 }
 
 .nav-link {
@@ -145,21 +130,66 @@ canvas {
 	grid-column: 3;
 }
 
+.pop-up-box {
+	margin: auto;
+	background: #505050f0;
+	background: #3c0203f5;
+	border-radius: 10px;
+	border: 2px solid #5f0305;
+	box-shadow: 0px 0px 5px 6px #0c0101;
+}
+
 .load-item {
 	opacity: 0;
 	animation-name: grow-fade-reduce;
-	animation-duration: 800ms;
+	animation-duration: 1400ms;
+	animation-timing-function: linear;
+	animation-delay: 500ms;
+	animation-fill-mode: forwards;
+}
+
+.load-dialog {
+	opacity: 0.0;
+	animation-name: grow-fade-reduce;
+	animation-duration: 1000ms;
 	animation-timing-function: linear;
 	animation-fill-mode: forwards;
 }
+
+.unload-dialog {
+	opacity: 1;
+	animation-name: shrink-fade;
+	animation-duration: 1600ms;
+	animation-timing-function: ease-in;
+	animation-fill-mode: forwards;
+}
+
+
+.load-dialog .load-section {
+	opacity: 0;
+	animation-name: fade-in;
+	animation-duration: 1000ms;
+	animation-timing-function: ease-in;
+	animation-fill-mode: forwards;
+	animation-delay: 500ms;
+}
+
+.unload-dialog .load-section {
+	opacity: 1;
+	animation-name: fade-out;
+	animation-duration: 500ms;
+	animation-timing-function: ease-in;
+	animation-fill-mode: forwards;
+	/*animation-delay: 500ms;*/
+}
+
 
 .game-icon {
 	width: 80%;
 	width: 15vmin;
 	max-width: 60px;
-	margin: 0 auto;
 	height: auto;
-	margin: 0% auto;
+	margin: 0 auto;
 	filter: drop-shadow(0px 0px 10px #000);
 	filter: drop-shadow(0px 0px 15px #a5a3a3);
 	filter: drop-shadow(0px 0px 15px #bfbfbf);
@@ -216,6 +246,74 @@ canvas {
 	color: wheat;
 	margin: 0% auto;
 	font-size: 5vmin;
+}
+
+
+@keyframes grow-fade-reduce {
+	0% { 
+		transform:scale(0.4); 
+	 	opacity:0.0; 
+	}
+
+	80% {
+		transform: scale(1.02);
+	}
+
+    100% {
+    	transform:scale(1.0); 
+    	opacity:1.0; 
+    }
+}
+
+
+@keyframes shrink-fade {
+	0% { 
+		transform:scale(1.0); 
+	 	opacity: 1; 
+	}
+
+	40% {
+		transform: scale(0.6);
+		opacity: 0.2; 
+	}
+
+	60% {
+		opacity: 0;
+	}
+
+    100% {
+    	transform:scale(0.3); 
+    	opacity: 0; 
+    }
+}
+
+@keyframes fade-in {
+	0% { 
+	 	opacity: 0.0; 
+	}
+
+	50% {
+		opacity: 0.5; 
+	}
+
+    100% {
+    	opacity: 1.0;  
+    }
+}
+
+
+@keyframes fade-out {
+	0% { 
+	 	opacity: 1.0; 
+	}
+
+	40% {
+		opacity: 0.5; 
+	}
+
+    100% {
+    	opacity: 0;  
+    }
 }
 
 
@@ -281,22 +379,4 @@ canvas {
 	.selection-options {
 		margin-bottom: 5%;
 	}
-
-}
-
-
-@keyframes grow-fade-reduce {
-	0% { 
-		transform:scale(0.5); 
-	 	opacity:0.0; 
-	}
-
-	80% {
-		transform: scale(1.08);
-	}
-
-    100% {
-    	transform:scale(1.0); 
-    	opacity:1.0; 
-    }
 }

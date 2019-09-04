@@ -10,5 +10,10 @@ let document_state = setInterval(function () {
 		clearInterval(document_state);
 		let body_tag = document.getElementById("main-body");
 		body_tag.className += " loaded";
+
+		window.setTimeout(() => {
+			let element = document.getElementById("preloader");
+			element.style.display = "none";
+		}, 1200);
 	}
 }, 10);
