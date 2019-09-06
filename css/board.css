@@ -142,9 +142,9 @@ canvas {
 .load-item {
 	opacity: 0;
 	animation-name: grow-fade-reduce;
-	animation-duration: 1400ms;
+	animation-duration: 1200ms;
 	animation-timing-function: linear;
-	animation-delay: 500ms;
+	animation-delay: 800ms;
 	animation-fill-mode: forwards;
 }
 
@@ -159,30 +159,39 @@ canvas {
 .unload-dialog {
 	opacity: 1;
 	animation-name: shrink-fade;
-	animation-duration: 1600ms;
+	animation-duration: 1200ms;
 	animation-timing-function: ease-in;
 	animation-fill-mode: forwards;
+	animation-delay: 600ms;
 }
 
 
 .load-dialog .load-section {
 	opacity: 0;
 	animation-name: fade-in;
-	animation-duration: 1000ms;
+	animation-duration: 800ms;
 	animation-timing-function: ease-in;
 	animation-fill-mode: forwards;
-	animation-delay: 500ms;
+	animation-delay: 600ms;
 }
 
 .unload-dialog .load-section {
+	animation-name: fade-out;
+	animation-duration: 500ms;
+	animation-timing-function: ease-in;
+	animation-fill-mode: forwards;
+	animation-delay: 50ms;
+}
+
+
+.unload-dialog .selection-options .load-item {
 	opacity: 1;
 	animation-name: fade-out;
 	animation-duration: 500ms;
 	animation-timing-function: ease-in;
 	animation-fill-mode: forwards;
-	/*animation-delay: 500ms;*/
+	animation-delay: 0ms;
 }
-
 
 .game-icon {
 	width: 80%;
@@ -206,6 +215,16 @@ canvas {
 }
 
 #back-dialog {
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	flex-direction: column;
+	justify-content: space-evenly;
+	z-index: 4;
+}
+
+#newgame-dialog {
 	display: none;
 	position: absolute;
 	top: 50%;
@@ -303,10 +322,6 @@ canvas {
 
 
 @keyframes fade-out {
-	0% { 
-	 	opacity: 1.0; 
-	}
-
 	40% {
 		opacity: 0.5; 
 	}

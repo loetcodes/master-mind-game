@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>MasterMind 2.0</title>
+	<title>MasterMind</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="css/preloader.css">
@@ -16,11 +16,11 @@
 
 	<!-- Back pop up box -->
 	<div id="back-dialog" class="pop-up-box load-dialog">
-		<div class="text-box">
+		<div class="text-box load-section">
 			<p class="text-content">Are you sure you want to quit this game?</p>
 		</div>
 		<div class="selection-options">
-			<a class="nav-link" href="home.html#main-pg" target="">
+			<a class="nav-link" href="javascript:resumeGameState('back-dialog', 'hint-dialog'); delay('home.html#main-pg')" target="">
 				<div class="menu-title load-item initial-load">Yes
 				</div>
 			</a>
@@ -46,6 +46,24 @@
 			</a>
 		</div>
 	</div>
+
+	<!-- Start new game pop up box -->
+	<div id="newgame-dialog" class="pop-up-box load-dialog">
+		<div class="text-box load-section">
+			<p class="text-content">Start a new game?</p>
+		</div>
+		<div class="selection-options">
+			<a class="nav-link" href="javascript:void(0)" onclick="javascript:startNewGame()">
+				<div class="menu-title load-item initial-load">Yes
+				</div>
+			</a>
+			<a class="nav-link" href="javascript:void(0)" onclick="javascript:resumeGameState('back-dialog', 'hint-dialog','newgame-dialog')">
+				<div class="menu-title load-item initial-load">No
+				</div>
+			</a>
+		</div>
+	</div>
+
 
 	<!-- CSS Preloader -->
 	<div id="preloader" class="load-wrapper">

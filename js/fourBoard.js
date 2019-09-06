@@ -17,9 +17,6 @@ let answer_url = ["./images/05_Answer_red_2.png", "./images/05_Answer_white_2.pn
 
 let num_board_holes = 4; 
 
-// Button variables
-let back_box;
-let hint_box;
 let total_hints = num_board_holes - 1;
 let total_rows = 10;
 let hints_given = [];
@@ -43,7 +40,7 @@ let stars_x, stars_y;
 
 
 let color_pegs = []; // stores the color pegs shapes
-let answ_poses = []; // stores x and y relative positions for drawing pos and col ans pegs
+let answ_poses = []; // stores x,y relative positions for drawing pos and col
 let row_circles = {};
 let scoring_circles = {};
 
@@ -55,7 +52,7 @@ let initialized = false;
 
 let ctrl_btns_funcs = {
 	1 : goBackToMenu,
-	2 : startNewGame,
+	2 : newGameOption,
 	3 : showHint,
 	4 : checkAnswer
 };
@@ -74,9 +71,8 @@ sizeInitialCanvas(); // Initialize the canvas sizes and widths based on window
 init(); // Initialize the game variables and all the images
 
 
-
-// RUN THE GAME PRELOADER ----------------------------------------
-main(); // Run the game preloader.
+// RUN THE GAME INITIALIZER----------------------------------------
+main();
 
 
 function main() {
@@ -105,25 +101,19 @@ for (let k = 1; k <= 8; k++) { // Draw left Side panel of colors
 
 	x_pos = (0.02 * canvas_1.width); // 2 percent from the edge
 	y_pos = k * row_grid_height + (row_grid_height - img_height) / 2;
-
-	// Additional gap added to y_pos
-	y_pos += ((gap_y / 2 )* (k - 1)) / 2;
-
+	y_pos += ((gap_y / 2 )* (k - 1)) / 2; // Additional gap added
 	radius = (img_width) / 2;
-
-	// Additional click detection allowance
-	radius += 5;
+	radius += 5; // Additional click detection allowance
 
 	x_pos_center = x_pos + radius - 5;
 	y_pos_center = y_pos + img_height / 2;
 
-	// Create a color peg object used later for detection of click, push to color pegs array. 
+	// Create a color peg object used later for detection of click
 	let color_peg = new ColorCircle(x_pos_center, y_pos_center, radius, k, img_width, img_height);
 	color_pegs.push(color_peg);
 
 	let img = color_images[k];
 	img.onload = function () {
-		// Draw the image and the color circle.
 		ctx_1.drawImage(img, x_pos, y_pos, img_width, img_height);
 		// color_peg.drawColorCircle();
 	}
@@ -693,7 +683,7 @@ function calulatePegValues(machine_ans, player_ans) {
 	let p_reduced = [];
 	let m_reduced = [];
 
-	// First check for any positioned pegs. Positioned pegs are where the player puts the color in the correct position.
+	// Check for any correctly positioned pegs.
 	for (let i = 0; i < machine_ans.length; i++) {
 		m_ans = machine_ans[i];
 		p_ans = player_ans[i];
@@ -723,7 +713,7 @@ function calulatePegValues(machine_ans, player_ans) {
 
 
 function calculateRelativeScorePos(num_of_holes, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height) {
-	// Calculates the relative x and y coordinates to place pegs on an image. Returns an array with the relative coordinates for each position on the scoring image.
+	// Calculates the relative x and y coordinates to place pegs on an image. Returns an array with the relative coordinates.
 	let result = [];
 	for (let h = 1; h <= num_of_holes; h++) {
 		let corner_x, corner_y;
@@ -836,7 +826,7 @@ function showHint() {
 
 		// Compute dialog box size and set sizes
 		let box_dims = createDialogBoxSize();
-		hint_box = document.getElementById("hint-dialog");
+		let hint_box = document.getElementById("hint-dialog");
 		hint_box.style.width = `${box_dims["dialog_width"]}` + "px";
 		hint_box.style.height = `${box_dims["dialog_height"]}` + "px";
 		hint_box.style.maxWidth = `${box_dims["max_width"]}` + "px";
@@ -876,9 +866,30 @@ function showHint() {
 }
 
 
-function startNewGame() {
+function newGameOption() {
+	// Prompt player to confirm they want to start a new game.
 	// Close any dialog boxes for hint and go back
 	resumeGameState('hint-dialog', 'back-dialog');
+
+	let box_dims = createDialogBoxSize();
+
+	let newgame_box = document.getElementById("newgame-dialog");
+
+	newgame_box.style.width = `${box_dims["dialog_width"]}` + "px";
+	newgame_box.style.height = `${box_dims["dialog_height"]}` + "px";
+	newgame_box.style.maxWidth = `${box_dims["max_width"]}` + "px";
+	newgame_box.style.marginLeft = `${box_dims["margin_left"]}` + "px";
+	newgame_box.style.marginTop = `${box_dims["margin_top"]}` + "px";
+	newgame_box.style.display = "flex";
+
+	// set game state to false
+	game_state = false;
+}
+
+
+function startNewGame() {
+	// Close any dialog boxes for hint and go back
+	resumeGameState('hint-dialog', 'back-dialog', 'newgame-dialog');
 
 	// Clear the canvas for a new game, Initialize new variables
 	clearFromCanvas(ctx_2, 0, 0, canvas_2.width, canvas_2.height);
@@ -911,9 +922,14 @@ function startNewGame() {
 
 function goBackToMenu() {
 	// Function that opens a dialog box providing options to quit or continue with the game.
+
+	// Close any dialog boxes for hint and newgame
+	resumeGameState('hint-dialog', 'newgame-dialog');
+
+
 	let box_dims = createDialogBoxSize();
 
-	back_box = document.getElementById("back-dialog");
+	let back_box = document.getElementById("back-dialog");
 
 	back_box.style.width = `${box_dims["dialog_width"]}` + "px";
 	back_box.style.height = `${box_dims["dialog_height"]}` + "px";
@@ -944,7 +960,7 @@ function resumeGameState(...element_ids) {
 			element.style.display = "none";
 			element.classList.remove("unload-dialog");
 			element.classList.add("load-dialog");
-		}, 1000);
+		}, 1500);
 
 		// element.style.display = "none";
 		// element.className += "";
