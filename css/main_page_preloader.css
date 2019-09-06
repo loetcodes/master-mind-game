@@ -17,10 +17,10 @@
 
 
 .loader-back {
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	background: #150000;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #150000;
   background: #1b0601;
 }
 
@@ -80,15 +80,15 @@
 }
 
 @keyframes fade_out{
-	0% {
-		opacity: 1.0;
-	}
-	50% {
-		opacity: 0.5;
-	}
-	100% {
-		opacity: 0;
-	}
+  0% {
+    opacity: 1.0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes fade_in{
