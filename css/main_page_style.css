@@ -130,19 +130,20 @@ CSS FOR MAIN GAME PAGE.
 	width: 90%;
 	margin: auto;
 	padding-left: 0px;
-	padding-inline-start: 10px;
+	/*padding-inline-start: 10px;*/
 }
 
 .list-items .list-row{
-	display: inline-grid;
+	display: grid;
 	grid-template-columns: 15% 80%;
 	grid-column-gap: 5%;
 	margin: 2% auto;
+	margin-left: 0%;
 }
 
 .list-row span {
 	text-align: left;
-	margin: auto;
+	margin: auto 0;
 }
 
 .game-icon {
@@ -516,6 +517,7 @@ CSS FOR MAIN GAME PAGE.
 
 	.text-box {
 		font-size: 3.2vmin;
+		font-size: 2.8vmin;
 	}
 
 	.footer-content .menu-title {
@@ -523,7 +525,6 @@ CSS FOR MAIN GAME PAGE.
 	}
 
 }
-
 
 
 @media screen and (min-width: 601px) {
@@ -536,7 +537,7 @@ CSS FOR MAIN GAME PAGE.
 	}
 
 	.game-title {
-		height: 9vmin;
+		height: 8vmin;
 		width: auto;
 	}
 
@@ -558,12 +559,8 @@ CSS FOR MAIN GAME PAGE.
 		letter-spacing: 0.4vw;
 	}
 
-	.text-box {
-		margin-bottom: 2%;
-	}
-
 	.information {
-	    font-size: 2.5vmin;
+	    font-size: 2.0vmin;
 	}
 
 	.page-title {
@@ -572,7 +569,9 @@ CSS FOR MAIN GAME PAGE.
 	}
 
 	.text-box {
+		margin-bottom: 2%;
 		font-size: 2.5vmin;
+		font-size: 2.0vmin;
 	}
 
 	.footer-content .menu-title {
@@ -597,8 +596,8 @@ CSS FOR MAIN GAME PAGE.
 	}
 
 	.text-box {
-		font-size: 2.7vmin;
 		margin-bottom: 0%;
+		font-size: 2.0vmin;
 	}
 
 	.menu-title {
@@ -612,11 +611,10 @@ CSS FOR MAIN GAME PAGE.
 	.footer-content .menu-title {
 		width: 20vw;
 		max-width: 200px;
-
 	}
 
 	.information {
-	    font-size: 2.5vmin;
+	    font-size: 2.0vmin;
 	}
 
 }
