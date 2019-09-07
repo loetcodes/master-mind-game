@@ -1,0 +1,397 @@
+
+/*STYLING FOR THE MASTERMIND BOARD GAME*/
+
+
+/*Default styling for devices below 800px*/
+
+@import url('https://fonts.googleapis.com/css?family=Livvic&display=swap');
+
+.body-content {
+	height: 100vh;
+	background: #232222;
+	display: grid;
+	/*grid-template-rows: 5% 95%;*/
+	grid-template-rows: 100%;
+	grid-template-columns: 100%;
+	margin: 0 auto;
+	background-position: top;
+	background-size: 205%;
+	background-repeat-x: no-repeat;
+	background-position-x: -412px;
+	
+	background: url("../images/01_Background_maroon.jpg");
+	background-position: top;
+	background-size: 97%;
+	background-repeat-x: repeat;
+	background-position-x: -380px;
+	font-family: 'Livvic', sans-serif;
+}
+
+.top-section {
+	grid-column: 1;
+	grid-row: 1;
+	/*grid-template-columns: 20% 80%;*/
+	height: 100%;
+	color: wheat;
+	text-align:center;
+	font-size: 1em;
+}
+
+.title-text {
+	font-size: 1em;
+}
+
+.text-box {
+	width: 75%;
+	text-align: center;
+	margin: 5% auto;
+	font-size: 2.2vw;
+	font-size: 2.6vmin;
+	color: wheat;
+	letter-spacing: 0.1em;
+}
+
+.box-column {
+	display: grid;
+	grid-template-rows: 50% 50%;
+	grid-column: 2;
+	justify-content: center;
+}
+
+.emphasis-num {
+	font-weight: bold;
+	font-size: 3.2vmin;
+}
+
+.text-content {
+	margin: auto;
+	line-height: 4vmin;
+}
+
+canvas {
+	border: 0px solid #0b0b0c;
+	grid-row: 1;
+	grid-column: 1;
+	background: #191818;
+	margin: auto;
+	background-image: url("../images/01_Background_small.png");
+	background-size: 192% 100%;
+	background-size: 120% 131%;
+	background-position: 45% 45%;
+	z-index: 0;
+}
+
+#game-bottom {
+	z-index: 0;
+	box-shadow: 1px -1px 20px 12px #000000;
+}
+
+#game-player {
+	background: none;
+	z-index: 1;
+}
+
+.nav-link {
+	text-decoration: none;
+	color: wheat;
+	width: 40%;
+	margin: 0 auto;
+}
+
+.menu-title {
+	margin: auto;
+	text-align: center;
+	text-transform: uppercase;
+	max-width: 140px;
+	padding: 9% 0%;
+	font-size: 0.8em;
+	font-size: 2.2vmin;
+	letter-spacing: 0.4em;
+	color: wheat;
+	font-weight: bold;
+	border-radius: 6px;
+
+	box-shadow: 3px 3px 7px 0px #4c0106;
+	background: #151515cc;
+	background: linear-gradient(to left, black 50%, #800d0f 50%);
+	background-size: 200% 100%;
+	background-position: left bottom;
+	transition: all .4s ease-in;
+}
+
+.menu-title:hover, .menu-title:focus {
+	background-position: right bottom;
+	outline: 0;
+}
+
+.selection-options {
+	display: flex;
+	flex-direction: row;
+	grid-column: 3;
+}
+
+.pop-up-box {
+	margin: auto;
+	background: #505050f0;
+	background: #3c0203f5;
+	border-radius: 10px;
+	border: 2px solid #5f0305;
+	box-shadow: 0px 0px 5px 6px #0c0101;
+}
+
+.load-item {
+	opacity: 0;
+	animation-name: grow-fade-reduce;
+	animation-duration: 1200ms;
+	animation-timing-function: linear;
+	animation-delay: 800ms;
+	animation-fill-mode: forwards;
+}
+
+.load-dialog {
+	opacity: 0.0;
+	animation-name: grow-fade-reduce;
+	animation-duration: 1000ms;
+	animation-timing-function: linear;
+	animation-fill-mode: forwards;
+}
+
+.unload-dialog {
+	opacity: 1;
+	animation-name: shrink-fade;
+	animation-duration: 1200ms;
+	animation-timing-function: ease-in;
+	animation-fill-mode: forwards;
+	animation-delay: 600ms;
+}
+
+
+.load-dialog .load-section {
+	opacity: 0;
+	animation-name: fade-in;
+	animation-duration: 800ms;
+	animation-timing-function: ease-in;
+	animation-fill-mode: forwards;
+	animation-delay: 600ms;
+}
+
+.unload-dialog .load-section {
+	animation-name: fade-out;
+	animation-duration: 500ms;
+	animation-timing-function: ease-in;
+	animation-fill-mode: forwards;
+	animation-delay: 50ms;
+}
+
+
+.unload-dialog .selection-options .load-item {
+	opacity: 1;
+	animation-name: fade-out;
+	animation-duration: 500ms;
+	animation-timing-function: ease-in;
+	animation-fill-mode: forwards;
+	animation-delay: 0ms;
+}
+
+.game-icon {
+	width: 80%;
+	width: 15vmin;
+	max-width: 60px;
+	height: auto;
+	margin: 0 auto;
+	filter: drop-shadow(0px 0px 10px #000);
+	filter: drop-shadow(0px 0px 15px #a5a3a3);
+	filter: drop-shadow(0px 0px 15px #bfbfbf);
+}
+
+.selection-options .text-content {
+	font-size: 2.2em;
+	font-size: 4vmin;
+}
+
+.selection-options .text-content:hover, .selection-options .text-content:focus {
+	color: #fff;
+	filter: drop-shadow(0px 0px 10px #000);
+}
+
+#back-dialog {
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	flex-direction: column;
+	justify-content: space-evenly;
+	z-index: 4;
+}
+
+#newgame-dialog {
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	flex-direction: column;
+	justify-content: space-evenly;
+	z-index: 3;
+}
+
+#hint-dialog {
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	flex-direction: column;
+	justify-content: space-evenly;
+	grid-template-columns: 10% 80% 10%;
+	z-index: 2;
+}
+
+#hint-dialog .text-content {
+	grid-row: 1;
+}
+
+#hint-dialog .game-icon {
+	grid-row: 2;
+}
+
+#hint-dialog .selection-options {
+	margin-right: 25%;
+}
+
+#hint-dialog .nav-link {
+	width: 100%;
+	height: max-content;
+	font-weight: 600;
+	text-align: center;
+	color: wheat;
+	margin: 0% auto;
+	font-size: 5vmin;
+}
+
+
+@keyframes grow-fade-reduce {
+	0% { 
+		transform:scale(0.4); 
+	 	opacity:0.0; 
+	}
+
+	80% {
+		transform: scale(1.02);
+	}
+
+    100% {
+    	transform:scale(1.0); 
+    	opacity:1.0; 
+    }
+}
+
+
+@keyframes shrink-fade {
+	0% { 
+		transform:scale(1.0); 
+	 	opacity: 1; 
+	}
+
+	40% {
+		transform: scale(0.6);
+		opacity: 0.2; 
+	}
+
+	60% {
+		opacity: 0;
+	}
+
+    100% {
+    	transform:scale(0.3); 
+    	opacity: 0; 
+    }
+}
+
+@keyframes fade-in {
+	0% { 
+	 	opacity: 0.0; 
+	}
+
+	50% {
+		opacity: 0.5; 
+	}
+
+    100% {
+    	opacity: 1.0;  
+    }
+}
+
+
+@keyframes fade-out {
+	40% {
+		opacity: 0.5; 
+	}
+
+    100% {
+    	opacity: 0;  
+    }
+}
+
+
+@media screen and (min-width: 801px) {
+	.top-section {
+		height: fit-content;
+		color: wheat;
+		text-align:center;
+		font-size: 1em;
+	}
+
+	.title-text {
+		font-size: 1em;
+		font-size: 3.2vmin;
+	}
+
+	.text-box {
+		font-size: 1.4em;
+		font-size: 2.6vmin;
+	}
+
+	.text-content {
+		line-height: 1.2em;
+	}
+
+	.menu-title {
+		font-size: 1em;
+		font-size: 2vmin;
+		letter-spacing: 0.8em;
+		padding: 8% 3%;
+	}
+
+	.selection-options {
+		margin-bottom: 5%;
+	}
+
+}
+
+
+@media screen and (min-width: 1201px) {
+	.top-section {
+		height: fit-content;
+		color: wheat;
+		text-align:center;
+		font-size: 1em;
+	}
+
+	.text-box {
+		margin: 5% auto;
+		font-size: 1.4em;
+	}
+
+	.text-content {
+		line-height: 1.2em;
+	}
+
+	.menu-title {
+		font-size: 1em;
+		letter-spacing: 0.8em;
+		padding: 8% 3%;
+	}
+
+	.selection-options {
+		margin-bottom: 5%;
+	}
+}

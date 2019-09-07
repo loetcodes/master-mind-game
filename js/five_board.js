@@ -10,12 +10,12 @@ canvas_2 = document.getElementById('game-player');
 let peg_colors = 8;
 let peg_urls = ["./images/circle_pegs/04_Peg_navyblue.png", "./images/circle_pegs/04_Peg_brown.png", "./images/circle_pegs/04_Peg_green.png", "./images/circle_pegs/04_Peg_teal.png", "./images/circle_pegs/04_Peg_purple.png", "./images/circle_pegs/04_Peg_lightgold.png", "./images/circle_pegs/04_Peg_pink.png", "./images/circle_pegs/04_Peg_red.png"];
 
-let board_hole_url = ["./images/02_Line_4.png", "./images/03_Answer_box_4.png"];
+let board_hole_url = ["./images/02_Line_5.png", "./images/03_Answer_box_5.png"];
 let icons_url = ["./images/06_Buttons_back.png", "./images/06_Buttons_new_game.png", "./images/06_Buttons_hint.png", "./images/06_Buttons_check_answer.png", "./images/09_3_Stars_black.png", "./images/09_3_Stars_gold.png"];
 let answer_url = ["./images/05_Answer_red_2.png", "./images/05_Answer_white_2.png"];
 
 
-let num_board_holes = 4; 
+let num_board_holes = 5; 
 
 let total_hints = num_board_holes - 1;
 let total_rows = 10;
@@ -44,8 +44,9 @@ let answ_poses = []; // stores x,y relative positions for drawing pos and col
 let row_circles = {};
 let scoring_circles = {};
 
-let row_poses = [0, 0, 0, 0];
+let row_poses = [0, 0, 0, 0, 0];
 let curr_play_row = 10;
+let rel_row_height = 0;
 let player_answers = [];
 let col_selected = false; // For storing colors that are clicked on;
 let initialized = false;
@@ -90,16 +91,18 @@ function main() {
 // DRAW FIXED GRAPHICS ONTO THE BACKGROUND CANVAS -----------------
 
 row_grid_height = canvas_1.height / 12;
+rel_row_height = row_grid_height + 0.001 * canvas_1.height;
+
 for (let k = 1; k <= 8; k++) { // Draw left Side panel of colors
 	let x_pos, y_pos, radius, x_pos_center, y_pos_center;
 	let img_height = row_grid_height - (0.40 * row_grid_height);
 	let img_width = img_height;
-	color_panel = img_width + (0.02 * canvas_1.width) * 2;
+	color_panel = img_width + (0.015 * canvas_1.width) * 2;
 
 	// Calculate spread gap from height minus the answer box, and bottom control panel
 	let gap_y = (canvas_1.height - row_grid_height * 3) / 8;
 
-	x_pos = (0.02 * canvas_1.width); // 2 percent from the edge
+	x_pos = (0.015 * canvas_1.width); // 1.5 percent from the edge
 	y_pos = k * row_grid_height + (row_grid_height - img_height) / 2;
 	y_pos += ((gap_y / 2 )* (k - 1)) / 2; // Additional gap added
 	radius = (img_width) / 2;
@@ -122,7 +125,7 @@ for (let k = 1; k <= 8; k++) { // Draw left Side panel of colors
 
 // DEFINE AND DRAW THE SCORE IMAGE PEGS AND PLAYER HOLES IMAGES -----------
 
-score_row_start = color_panel + (0.012 * canvas_1.width);
+score_row_start = color_panel + (0.005 * canvas_1.width);
 
 // Draw the 10 scoring boxes and 11 blank hole rows
 let scoring_img, scoring_img_height, scoring_img_width, scoring_img_scale;
@@ -130,11 +133,11 @@ scoring_img = four_board[2];
 scoring_img.onload = function () {
 	let x_pos, y_pos;
 	scoring_img_scale = scoring_img.width / scoring_img.height;
-	scoring_img_height = row_grid_height - (0.10 * row_grid_height);
+	scoring_img_height = row_grid_height - (0.28 * row_grid_height);
 	scoring_img_width = scoring_img_height * scoring_img_scale;
 	x_pos = score_row_start;
 	for (let i = 1; i <= 10; i++){
-		y_pos = (i * row_grid_height) + (row_grid_height - scoring_img_height) / 2;
+		y_pos = i * rel_row_height + (row_grid_height - scoring_img_height) / 2;
 		drawImageOnCanvas(ctx_1, scoring_img, x_pos, y_pos, scoring_img_width, scoring_img_height);
 	}
 }
@@ -142,31 +145,28 @@ scoring_img.onload = function () {
 // Draw the 10 player peg hole images and the one for the machine answer row
 let hole_img, hole_img_width, hole_img_height, hole_img_scale;
 let ans_box_width, ans_box_height, ans_top_x, ans_top_y;
-
 hole_img = four_board[1];
-// hole_img_height = row_grid_height - (0.20 * row_grid_height);
 hole_img.onload = function() {
 	let x_pos, y_pos, box_allowance;
-	box_allowance = (0.005 * canvas_1.width);
+	box_allowance = (0.010 * canvas_1.width);
 
 	hole_img_scale = hole_img.width / hole_img.height;
-	hole_img_height = row_grid_height - (0.12 * row_grid_height);
+	hole_img_height = row_grid_height - (0.18 * row_grid_height);
 	hole_img_width = hole_img_height * hole_img_scale;
 
-	ans_box_width = hole_img_width + box_allowance * 2;
+	ans_box_width = hole_img_width + box_allowance / 2;
 	ans_box_height = hole_img_height + (0.06 * hole_img_height) * 2;
 
 	window.setTimeout(function() {
-		// 1 percent edge allowance removed to center
-		// player_row_start = canvas_1.width - color_panel - hole_img_width + (0.01 * canvas_1.width) / 2;
-
+		// 1 percent edge allowance added to y_pos
 		player_row_start = canvas_1.width - color_panel - hole_img_width;
 		player_row_start += box_allowance;
+
 		x_pos = player_row_start;
 		
 		for (let i = 0; i <= 10; i++) {
 			// Compute the y value for the images
-			y_pos = i * row_grid_height + (row_grid_height - hole_img_height) / 2;
+			y_pos = i * rel_row_height + (row_grid_height - hole_img_height) / 2;
 
 			// Row circles array for each row, stored with a corresponding number.
 			row_circles[i] = createRowCircles(x_pos, y_pos, hole_img_height, hole_img_width, num_board_holes, game_state);
@@ -227,7 +227,7 @@ newgame_icon.onload = () => {
 	newgame_icon_height = row_grid_height  - (0.40 * row_grid_height);
 	newgame_icon_width = newgame_icon_height * newgame_icon_scale;
 	
-	x_pos = canvas_1.width - (0.015 * canvas_1.width) - newgame_icon_width;
+	x_pos = canvas_1.width - (0.010 * canvas_1.width) - newgame_icon_width;
 	y_pos = canvas_1.height - (0.1 * row_grid_height) - newgame_icon_height;
 	radius = newgame_icon_width / 2;
 
@@ -275,8 +275,10 @@ check_icon.onload = () => {
 	check_icon_height = row_grid_height - (0.40 * row_grid_height);
 	check_icon_width = check_icon_height * check_icon_scale;
 
-	x_pos = canvas_1.width - (0.015 * canvas_1.width) - check_icon_width;
-	y_pos = row_grid_height * (curr_play_row) + (row_grid_height - check_icon_height) / 2;
+	x_pos = canvas_1.width - (0.010 * canvas_1.width) - check_icon_width;
+	y_pos = curr_play_row * rel_row_height + (row_grid_height - check_icon_height) / 2;
+	
+
 	radius = check_icon_width  / 2;
 
 	// Circle obj used later for click detection and button movement
@@ -296,7 +298,7 @@ stars_back.onload = () => {
 	let temp_no = 5;
 
 	stars_back_scale = stars_back.width / stars_back.height;
-	stars_back_height = row_grid_height - (0.45 * row_grid_height);
+	stars_back_height = row_grid_height - (0.50 * row_grid_height);
 	stars_back_width = stars_back_height * stars_back_scale;
 
 	x_pos = (0.020 * canvas_1.width); // 2 percent from the edge
@@ -429,7 +431,7 @@ canvas_2.addEventListener('click', (e) => {
 });
 
 
-//--------------- CLASSES, FUNCTION DECLARATIONS ------------------------------------
+//--------------- CLASSES, FUNCTION DECLARATIONS --------------------------------
 
 
 function GameCircle(x_center, y_center, radius, color, state) {
@@ -511,7 +513,7 @@ function init() {
 
 
 function calculateOptimumCanvas(window_width, window_height){
-	// Function that computes the optimum width height that is within the 9:16 ratio for the board.
+	// Function that computes the optimum width height that is within the 10:16 ratio for the board.
 	let canvas_size;
 	let max_width = window_width;
 	let window_ratio = window_width / window_height;
@@ -608,7 +610,7 @@ function createRowCircles(top_x, top_y, curr_height, curr_width, no_of_circles, 
 		row_circles.push(circle_object);
 
 		// Draw the circle. Remove the draw function once everything is outlined. FINAL STEPS
-		drawCircle(ctx_2, x_center, y_center, radius, "");
+		drawCircle(ctx_2, x_center, y_center, radius, "blue");
 	}
 	return row_circles;
 }
@@ -720,21 +722,44 @@ function calulatePegValues(machine_ans, player_ans) {
 function calculateRelativeScorePos(num_of_holes, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height) {
 	// Calculates the relative x and y coordinates to place pegs on an image. Returns an array with the relative coordinates.
 	let result = [];
+	let mid = Math.round(num_of_holes / 2);
+	let x_gap = 0.05 * scoring_img_width;
+	let y_gap = 0.08 * scoring_img_height;
 	for (let h = 1; h <= num_of_holes; h++) {
 		let corner_x, corner_y;
-		if (h % 2 != 0) {
-			corner_x = score_row_start + scoring_img_width / 2 - image_width - (0.02 * scoring_img_width);
-		} else if (h % 2 == 0) {
-			corner_x = score_row_start + scoring_img_width / 2 + (0.04 * scoring_img_width);
-		}
-		if (h <= num_board_holes / 2) {
-			corner_y = scoring_img_height / 2 - image_height;
+		if (h != 3) {
+			if (h < mid) {
+				corner_x = score_row_start + h * (image_width + x_gap) - (x_gap * 2) + (h - 1) * (image_width + x_gap * 1.5);
+				corner_y = scoring_img_height / 2 - image_height / 2;
+			} else if(h > mid) {
+				corner_x = score_row_start + (h - mid) * (image_width + x_gap) - (x_gap * 2) + ((h - mid) - 1) * (image_width + x_gap * 1.5);
+				corner_y = scoring_img_height / 2 + image_height / 2 + y_gap ;
+			}
+			// let rel_pos_coords = {name : 'Relative Coords', x : corner_x, y : corner_y, width : image_width, height : image_height};
+			// result.push(rel_pos_coords);
+
 		} else {
-			corner_y = scoring_img_height / 2 + (0.08 * scoring_img_height);
+			corner_x = score_row_start  + scoring_img_width / 2 - (image_width / 2);
+			corner_y = scoring_img_height / 2 + y_gap / 2;
+
 		}
 		let rel_pos_coords = {name : 'Relative Coords', x : corner_x, y : corner_y, width : image_width, height : image_height};
 		result.push(rel_pos_coords);
+
+
+		// if (h <= num_of_holes / 2) {
+		// 	corner_x = score_row_start + h * (image_width + x_gap) - (x_gap * 2);
+		// 	corner_y = scoring_img_height / 2 - image_height / 2 - y_gap;
+		// } else if(h > num_of_holes / 2) {
+		// 	corner_x = score_row_start + (h - num_of_holes / 2) * (image_width + x_gap) - (x_gap * 2);
+		// 	corner_y = scoring_img_height / 2 + image_height / 2 ;
+		// }
+		// let rel_pos_coords = {name : 'Relative Coords', x : corner_x, y : corner_y, width : image_width, height : image_height};
+		// result.push(rel_pos_coords);
+
+
 	}
+	
 	return result;
 }
 
@@ -790,9 +815,8 @@ function drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_im
 	ctx_2.strokeRect(ans_top_x, ans_top_y, ans_box_width, ans_box_height);
 
 	ctx_2.lineWidth = 1;
-	ctx_2.strokeStyle = 'transparent';
-
 	ctx_1.lineWidth = 1;
+	ctx_2.strokeStyle = 'transparent';
 }
 
 
@@ -904,7 +928,7 @@ function startNewGame() {
 	set_answ = newGameAnswers(new_base, num_board_holes);
 
 	// Return game states to initial states
-	row_poses = [0, 0, 0, 0];
+	row_poses = [0, 0, 0, 0, 0];
 	curr_play_row = 10;
 	player_answers = [];
 	col_selected = false;
@@ -987,7 +1011,7 @@ function checkAnswer() {
 			row_player_answers.push(img_obj.img_number);
 		});
 
-		// Score the players answer into black and white pegs
+		// Score the players answer into red and white pegs
 		let row_scores = calulatePegValues(set_answ, row_player_answers);
 
 		// Draw the resulting pegs based on the row_scores
@@ -1000,6 +1024,7 @@ function checkAnswer() {
 
 		// Calculate height up to the position that is currently playing
 		let y_abs = row_grid_height * curr_play_row;
+		y_abs = rel_row_height * curr_play_row;
 
 		// Draw the pos pegs if any
 		for (let i = num_pos_ans; i > 0; i--) {
@@ -1023,7 +1048,7 @@ function checkAnswer() {
 			counter += 1;
 		}
 
-		// If all 4 pegs, game_state should be false. If not, move to the next row, clear the player answers, move the submit button to the next row.
+		// If all 6 pegs, game_state should be false. If not, move to the next row, clear the player answers, move the submit button to the next row.
 		if (num_pos_ans == num_board_holes) {
 			game_state = false;
 			// Reveal answers and rate winner accordingly
@@ -1041,7 +1066,7 @@ function checkAnswer() {
 			revealGameAnswers(player_row_start, row_grid_height, ans_box_width, ans_box_height);
 			moveCheckButton(game_ctrls[4], curr_play_row);
 		}
-		row_poses = [0, 0, 0, 0]; // reset the row poses to 0
+		row_poses = [0, 0, 0, 0, 0]; // reset the row poses to 0
 	}
 
 }
@@ -1057,7 +1082,8 @@ function moveCheckButton(check_obj, curr_row) {
 
 	// Compute the new check button x and y values.
 	let new_x = clear_x;
-	let new_y = row_grid_height * (curr_row) + (row_grid_height - check_icon_height) / 2;
+	let new_y = curr_play_row * rel_row_height + (row_grid_height - check_icon_height) / 2;
+
 	radius = check_icon_width  / 2;
 	check_obj.y = new_y + check_icon_height / 2;
 
