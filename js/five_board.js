@@ -610,7 +610,7 @@ function createRowCircles(top_x, top_y, curr_height, curr_width, no_of_circles, 
 		row_circles.push(circle_object);
 
 		// Draw the circle. Remove the draw function once everything is outlined. FINAL STEPS
-		drawCircle(ctx_2, x_center, y_center, radius, "blue");
+		drawCircle(ctx_2, x_center, y_center, radius, "");
 	}
 	return row_circles;
 }
