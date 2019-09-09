@@ -301,7 +301,7 @@ stars_back.onload = () => {
 	stars_back_height = row_grid_height - (0.50 * row_grid_height);
 	stars_back_width = stars_back_height * stars_back_scale;
 
-	x_pos = (0.020 * canvas_1.width); // 2 percent from the edge
+	x_pos = (0.020 * canvas_1.width); // 2% from the edge
 	y_pos = (row_grid_height - stars_back_height) / 2;
 
 	stars_x = x_pos;
