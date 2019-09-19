@@ -4,19 +4,14 @@ CSS FOR MAIN GAME PAGE.
 
 */
 
-
 /*DEFAULT VALUES*/
-
-/*@import url('https://fonts.googleapis.com/css?family=Livvic:400,500&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,600&display=swap');*/
 
 @import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,600|Livvic&display=swap');
 
 .body-content{
 	height: 100vh;
 	margin: 0;
-	overflow: none;
-	font-family: 'Livvic', sans-serif;
+	overflow: hidden;
 	font-family: 'Libre Franklin', sans-serif;
 }
 
@@ -25,7 +20,7 @@ CSS FOR MAIN GAME PAGE.
 	display: grid;
 	height: 100%;
 	grid-template-columns: 10% 80% 10%;
-	grid-template-rows: 15% 64% 15%;
+	grid-template-rows: 12% 67% 15%;
 	grid-row-gap: 3%;
 	background-image : url("../images/01_Background_maroon.jpg");
 	background-position: 40% 90%;
@@ -37,9 +32,10 @@ CSS FOR MAIN GAME PAGE.
 .top-section {
 	grid-column: 2;
 	grid-row: 1;
-	margin: 2% auto;
 	position: relative;
 	top: 3vh;
+	display: flex;
+	justify-content: center;
 }
 
 .content-section {
@@ -53,6 +49,11 @@ CSS FOR MAIN GAME PAGE.
 	box-shadow: inset 0px 6px 18px 11px #2b0203;
 	border-bottom: 2px solid #340001;
 	color: wheat;
+}
+
+.title-header {
+	position: relative;
+
 }
 
 .game-title {
@@ -204,8 +205,7 @@ CSS FOR MAIN GAME PAGE.
 
 .person-info {
 	grid-row: 3;
-	margin: auto;
-	margin-bottom: 1px;
+	align-self: end;
 }
 
 .social-icon, .game-icon {
@@ -286,23 +286,17 @@ CSS FOR MAIN GAME PAGE.
 	animation-delay: 2000ms;
 }
 
+
 /* Loading animation timing delays */
 
 .page-content .content-section .nav-link:nth-child(1) .load-item { animation-delay: 500ms }
-
 .page-content .content-section .nav-link:nth-child(2) .load-item { animation-delay: 1000ms }
-
 .page-content .content-section .nav-link:nth-child(3) .load-item { animation-delay: 1500ms }
-
 .page-content .footer-content .load-item { animation-delay: 2000ms }
 
 
-
-
 #main-pg.onstart-load .load-transition .nav-link:nth-child(1) .initial-load { animation-delay: 4000ms }
-
 #main-pg.onstart-load .load-transition .nav-link:nth-child(2) .initial-load { animation-delay: 4500ms }
-
 #main-pg.onstart-load .load-transition .nav-link:nth-child(3) .initial-load { animation-delay: 5000ms }
 
 
@@ -449,22 +443,12 @@ CSS FOR MAIN GAME PAGE.
 @media screen and (max-width: 600px) {
 	.game-title {
 		height: 9vmin;
-		max-width: auto;
 	}
 
 	.page-content {
 		background-position: 40% 90%;
 		background-size: 150%;
 		margin: auto;
-	}
-
-	.top-section {
-		grid-column: 2;
-		grid-row: 1;
-		position: relative;
-		top: 3vh;
-		margin: 2% auto;
-		margin-bottom: 0%;
 	}
 
 	.content-section {
@@ -516,7 +500,6 @@ CSS FOR MAIN GAME PAGE.
 	}
 
 	.text-box {
-		font-size: 3.2vmin;
 		font-size: 2.8vmin;
 	}
 
@@ -539,11 +522,6 @@ CSS FOR MAIN GAME PAGE.
 	.game-title {
 		height: 8vmin;
 		width: auto;
-	}
-
-	.top-section {
-		margin: 0% auto;
-		margin-bottom: 0%;
 	}
 
 	.content-section {
@@ -574,12 +552,7 @@ CSS FOR MAIN GAME PAGE.
 		font-size: 2.0vmin;
 	}
 
-	.footer-content .menu-title {
-		/*width: 25vw;*/
-	}
-
 }
-
 
 
 @media screen and (min-width: 961px) {
