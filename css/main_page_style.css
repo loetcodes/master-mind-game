@@ -255,7 +255,7 @@ CSS FOR MAIN GAME PAGE.
 	opacity: 0;
 	animation-name: fade-in;
 	animation-duration: 800ms;
-	animation-delay: 5200ms;
+	animation-delay: 5250ms;
 	animation-timing-function: ease-in;
 	animation-fill-mode: forwards;
 }
