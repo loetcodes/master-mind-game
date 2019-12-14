@@ -1,5 +1,5 @@
 
-/*STYLING FOR THE MASTERMIND BOARD GAME*/
+/* STYLING FOR THE MASTERMIND BOARD GAME.*/
 
 
 /*Default styling for devices below 800px*/
@@ -10,8 +10,7 @@
 	height: 100vh;
 	background: #232222;
 	display: grid;
-	grid-template-rows: 100%;
-	grid-template-columns: 100%;
+	grid: 100% / 100%;
 	margin: 0 auto;	
 	background: url("../images/01_Background_maroon.jpg");
 	background-position: top;
@@ -63,10 +62,22 @@ canvas {
 	background: #191818;
 	margin: auto;
 	background-image: url("../images/01_Background_small.png");
-	background-size: 192% 100%;
+	z-index: 0;
+}
+
+.four_canvas {
 	background-size: 200% 150%;
 	background-position: 76%;
-	z-index: 0;
+}
+
+.five_canvas {
+	background-size: 120% 131%;
+	background-position: 45% 45%;
+}
+
+.six_canvas {
+	background-size: 155% 150%;
+	background-position: 105% 11%;
 }
 
 #game-bottom {
@@ -98,7 +109,6 @@ canvas {
 	color: wheat;
 	font-weight: bold;
 	border-radius: 6px;
-
 	box-shadow: 3px 3px 7px 0px #4c0106;
 	background: #151515cc;
 	background: linear-gradient(to left, black 50%, #800d0f 50%);
@@ -120,7 +130,6 @@ canvas {
 
 .pop-up-box {
 	margin: auto;
-	background: #505050f0;
 	background: #3c0203f5;
 	border-radius: 10px;
 	border: 2px solid #5f0305;
@@ -153,7 +162,6 @@ canvas {
 	animation-delay: 600ms;
 }
 
-
 .load-dialog .load-section {
 	opacity: 0;
 	animation-name: fade-in;
@@ -171,7 +179,6 @@ canvas {
 	animation-delay: 50ms;
 }
 
-
 .unload-dialog .selection-options .load-item {
 	opacity: 1;
 	animation-name: fade-out;
@@ -187,8 +194,6 @@ canvas {
 	max-width: 60px;
 	height: auto;
 	margin: 0 auto;
-	filter: drop-shadow(0px 0px 10px #000);
-	filter: drop-shadow(0px 0px 15px #a5a3a3);
 	filter: drop-shadow(0px 0px 15px #bfbfbf);
 }
 
@@ -255,7 +260,6 @@ canvas {
 	font-size: 5vmin;
 }
 
-
 @keyframes grow-fade-reduce {
 	0% { 
 		transform:scale(0.4); 
@@ -269,53 +273,6 @@ canvas {
     100% {
     	transform:scale(1.0); 
     	opacity:1.0; 
-    }
-}
-
-
-@keyframes shrink-fade {
-	0% { 
-		transform:scale(1.0); 
-	 	opacity: 1; 
-	}
-
-	40% {
-		transform: scale(0.6);
-		opacity: 0.2; 
-	}
-
-	60% {
-		opacity: 0;
-	}
-
-    100% {
-    	transform:scale(0.3); 
-    	opacity: 0; 
-    }
-}
-
-@keyframes fade-in {
-	0% { 
-	 	opacity: 0.0; 
-	}
-
-	50% {
-		opacity: 0.5; 
-	}
-
-    100% {
-    	opacity: 1.0;  
-    }
-}
-
-
-@keyframes fade-out {
-	40% {
-		opacity: 0.5; 
-	}
-
-    100% {
-    	opacity: 0;  
     }
 }
 
@@ -352,7 +309,6 @@ canvas {
 	.selection-options {
 		margin-bottom: 5%;
 	}
-
 }
 
 
@@ -382,4 +338,44 @@ canvas {
 	.selection-options {
 		margin-bottom: 5%;
 	}
+}
+
+
+@keyframes shrink-fade {
+	0% { 
+		transform:scale(1.0); 
+	 	opacity: 1; 
+	}
+	40% {
+		transform: scale(0.6);
+		opacity: 0.2; 
+	}
+	60% {
+		opacity: 0;
+	}
+    100% {
+    	transform:scale(0.3); 
+    	opacity: 0; 
+    }
+}
+
+@keyframes fade-in {
+	0% { 
+	 	opacity: 0.0; 
+	}
+	50% {
+		opacity: 0.5; 
+	}
+    100% {
+    	opacity: 1.0;  
+    }
+}
+
+@keyframes fade-out {
+	40% {
+		opacity: 0.5; 
+	}
+    100% {
+    	opacity: 0;  
+    }
 }
