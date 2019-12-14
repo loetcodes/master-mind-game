@@ -14,31 +14,20 @@
 	grid-template-rows: 100%;
 	grid-template-columns: 100%;
 	margin: 0 auto;
-	background-position: top;
-	background-size: 205%;
-	background-repeat-x: no-repeat;
-	background-position-x: -412px;
-	
 	background: url("../images/01_Background_maroon.jpg");
 	background-position: top;
 	background-size: 97%;
-	background-repeat-x: repeat;
+	background-repeat: repeat;
 	background-position-x: -380px;
 	font-family: 'Livvic', sans-serif;
 }
 
-.top-section {
-	grid-column: 1;
-	grid-row: 1;
-	/*grid-template-columns: 20% 80%;*/
-	height: 100%;
-	color: wheat;
-	text-align:center;
+.title-text {
 	font-size: 1em;
 }
 
-.title-text {
-	font-size: 1em;
+#board_value {
+	display: none;
 }
 
 .text-box {

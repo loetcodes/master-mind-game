@@ -34,6 +34,7 @@ let answ_poses = []; // stores x,y relative positions for drawing pos and col
 let row_circles = {};
 let scoring_circles = {};
 let curr_play_row = 10;
+let rel_row_height = 0;
 let player_answers = [];
 let col_selected = false; // For storing colors that are clicked on;
 let initialized = false;
@@ -95,6 +96,7 @@ canvas_2 = document.getElementById('game-player');
 num_board_holes = parseInt(document.getElementById('board_value').textContent);
 total_hints = num_board_holes - 1;
 row_poses = new Array(num_board_holes).fill(0);
+console.log("Number of board holes is", num_board_holes);
 board_hole_url = setBoardUrls(num_board_holes);
 
 base_array = generateRandomNumbers(num_board_holes); 
@@ -436,7 +438,6 @@ canvas_2.addEventListener('click', (e) => {
 			col_selected = false;
 		}
 	});
-
 });
 
 
@@ -765,9 +766,10 @@ function drawGameAnswersBox(player_row_start, row_grid_height, hole_img, hole_im
 	ctx_2.fillRect(ans_top_x, ans_top_y, ans_box_width, ans_box_height);
 	ctx_2.strokeRect(ans_top_x, ans_top_y, ans_box_width, ans_box_height);
 
+	ctx_1.lineWidth = 1;
 	ctx_2.lineWidth = 1;
 	ctx_2.strokeStyle = 'transparent';
-	ctx_1.lineWidth = 1;
+	
 }
 
 
@@ -825,7 +827,6 @@ function showHint() {
 			hint_img.src = img_src;
 			total_hints --;
 			hint_count.innerHTML = total_hints;
-
 		} else {
 			// No more hints, show all hints exhausted text, update hint dialog box
 			let img_src = "./images/08_X-Icon.png";
@@ -846,7 +847,6 @@ function newGameOption() {
 	resumeGameState('hint-dialog', 'back-dialog');
 
 	let box_dims = createDialogBoxSize();
-
 	let newgame_box = document.getElementById("newgame-dialog");
 
 	newgame_box.style.width = `${box_dims["dialog_width"]}` + "px";
