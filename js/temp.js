@@ -1,9 +1,8 @@
 /* Javascript for MasterMind 2.0 */
 
-
+import {ScoreGame} from "./modules/gameScoring.js"
 import {BoardCanvas, Board, ColorCircle, GameCircle} from "./modules/gameBoard.js"
-
-
+import {GameControlButton} from "./modules/gameControls.js"
 
 
 // The urls for the pegs, board, icon and answer images to be used in the game.
@@ -20,28 +19,36 @@ let boardhole_url6 = ["./images/02_Line_6.png", "./images/03_Answer_box_6.png"];
 
 var width, height, board_canvas;
 let canvas_size, canvas_1, canvas_2, ctx_1, ctx_2;
-let num_board_holes, total_hints, row_poses;
+let num_board_holes, totalHints, row_poses;
 let color_images, game_ctrls_imgs, answer_images, num_board;
+let game_ctrls = {};
 let color_panel = 0;
 let score_row_start = 0;
 let player_row_start = 0;
 let right_panel_start = 0;
+// let curr_play_row = 10;
 let color_pegs = []; // stores the color pegs shapes
 let preloaded = false;
 let initialized = false;
+let hintsGiven = [];
+let mainBoard;
+let newGameYes, newGameNo, hintClose, goBackYes, goBackNo;
+let popUpItems = ['back-dialog', 'hint-dialog','newgame-dialog']; 
 
 
-
-// GET THE GAME BOARD VARIABLES FOR BOARD VALUE, COMPUTE AND STORE ANSWERS.
+// GET THE GAME BOARD VARIABLES FOR BOARD VALUE, INITIALIZE CONTROL ITEMS AS WELL.
 
 num_board_holes = parseInt(document.getElementById('board_value').textContent);
-total_hints = num_board_holes - 1;
+totalHints = num_board_holes - 1;
 row_poses = new Array(num_board_holes).fill(0);
 board_hole_url = setBoardUrls(num_board_holes);
 
 
 // INITIALIZE GAME VARIABLES AND ITEMS. -----------------------------
 init();
+
+//Play the game.
+mainGamePlay(mainBoard);
 
 // FUNCTION DECLARATIONS --------------------------------------------
 
@@ -60,8 +67,10 @@ function init(){
 	answer_images = preloadGameImages(answer_url);
 	initialized = true;
 
-	// Draw Board graphics and initialize the item objects.
-	drawBoardItems(num_board_holes);
+	// Draw Board graphics and initialize the item objects, then set this main Board.
+	mainBoard = drawBoardItems(num_board_holes);
+
+	return mainBoard;
 
 }
 
@@ -108,6 +117,111 @@ function sizeInitialCanvas(num_board_holes, width, height, canvas_1, canvas_2) {
 	ctx_2.height = canvas_size[height];
 }
 
+function resumeGameState(boardItem, ...element_ids) {
+	// Function that takes an element_id and puts its display to none, based on any parameters.
+	let board = boardItem;
+	for (let arg_id of element_ids) {
+		let element = document.getElementById(arg_id);
+		element.classList.remove("load-dialog");
+		element.classList.add("unload-dialog");
+		window.setTimeout(() => {
+			element.style.display = "none";
+			element.classList.remove("unload-dialog");
+			element.classList.add("load-dialog");
+		}, 1500);
+	}
+	board.game_state = true;
+}
+
+function createDialogBoxSize(maxWidth) {
+	// Function that creates the size of the dialog box based on the window view.
+	let dialogWidth, dialogHeight;
+	let dialogDims = {};
+	let tempWidth = window.innerWidth / 2;
+	if (tempWidth >= maxWidth) {
+		dialogWidth = tempWidth * 0.50;
+		dialogHeight = window.innerHeight / 4;
+	} else {
+		dialogWidth = tempWidth;
+		dialogHeight = window.innerHeight / 4;
+	}
+	dialogDims["dialogWidth"] = dialogWidth;
+	dialogDims["dialogHeight"] = dialogHeight;
+	dialogDims["maxWidth"] = maxWidth;
+	dialogDims["marginLeft"] = 0 - dialogWidth / 2;
+	dialogDims["marginTop"] = 0 - dialogHeight / 2;
+
+	return dialogDims;
+}
+
+function gamePopUpBox(board, elementIdName) {
+	// Returns a function that opens a dialog box.
+	let maxBoxWidth = board.width;
+	let elementBox = document.getElementById(elementIdName);
+	let otherElementIds = [];
+	for (let item of popUpItems) {
+		if (item !== elementIdName) {
+			otherElementIds.push(item);
+		}
+	}
+
+	function newG() {
+		// Close any dialog boxes that may have been open.
+		resumeGameState(board, ...otherElementIds);
+
+		let boxDims = createDialogBoxSize(maxBoxWidth);
+		elementBox.style.width = `${boxDims["dialogWidth"]}` + "px";
+		elementBox.style.height = `${boxDims["dialogHeight"]}` + "px";
+		elementBox.style.maxWidth = `${boxDims["maxWidth"]}` + "px";
+		elementBox.style.marginLeft = `${boxDims["marginLeft"]}` + "px";
+		elementBox.style.marginTop = `${boxDims["marginTop"]}` + "px";
+		elementBox.style.display = "flex";
+
+		// set game state to false
+		board.game_state = false;
+	}
+	return newG;
+
+}
+
+
+function startNewGame(board, color_images) {
+	let roundAnswers;
+	let topRow;
+	// Close any other dialog boxes.
+	resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
+
+	// Clear the top canvas for a new game, then initialize new variables.
+	board.clearFromCanvas(board.ctx_2, 0, 0, board.width, board.height);
+
+	// Return game state to initial states.
+	board.row_answers = board.row_answers.fill(0);
+	board.curr_play_row = 10;
+	board.col_selected = false;
+	totalHints = board.boardSize - 1;
+	hintsGiven = [];
+	board.game_state = true;
+
+	// Return check answer back to start.
+	board.moveCheckButton('checkBtn', board.curr_play_row);
+
+	// Clear current game answers from canvas, drawing background graphics on ctx_1 including peg holder.
+	board.drawGameAnswersBox(board);
+
+	// Generate new game answers and draw the game answers.
+	// roundAnswers = answerSet.generateGameAnswer(board.boardSize);
+	roundAnswers = [8, 2, 8, 5, 1, 2];
+	board.game_answers = roundAnswers;
+
+	// Draw the game round answers.
+	topRow = board.row_circles[0];
+	board.drawAnswer(board, topRow, color_images);
+}
+
+function getHint() {
+	console.log('The function when clicked on  GET GAME HINT-----');
+}
+
 
 function drawBoardItems(num_board_holes) {
 	// set edge size variable.
@@ -116,6 +230,7 @@ function drawBoardItems(num_board_holes) {
 		5 : {edge_size: 0.015, x_space : 0.005, y_space : 0.28, x_box_space : 0.010, hole_y : 0.18, rel_row_y: 0.001},
 		6 : {edge_size: 0.015, x_space : 0.008, y_space : 0.20, x_box_space : 0.008, hole_y : 0.23, rel_row_y: 0.001},
 	};
+
 	// Create a new board
 	let board = new Board(canvas_1, canvas_2, ctx_1, ctx_2, num_board_holes);
 	let edge_size, x_space, y_space, x_box_space, hole_y, rel_row_y;
@@ -128,46 +243,112 @@ function drawBoardItems(num_board_holes) {
 	rel_row_y = board_space.rel_row_y; // Adds additional spacing between the rows.
 
 	// Draw left side color panels on ctx_1
-	for (let k = 1; k <= 8; k++) {
-		board.drawLeftSidePegs(edge_size, color_panel, color_pegs, color_images, k , ColorCircle, ctx_1);
-	}
+	board.drawLeftSidePegs(peg_colors, edge_size, color_panel, color_pegs, color_images, ColorCircle, ctx_1);
 	color_pegs = board.color_pegs;
 	
-	// Draw the Row Scoring boxes.
+	// Draw the Row Scoring boxes and then Create Scoring Pegs for the game.
 	let rows = 10;
 	score_row_start = board.color_panel + x_space * canvas_1.width;
-	board.drawScoreRowPegs(score_row_start, y_space, rel_row_y, board.color_panel, num_board, rows, ctx_1);
+	board.drawScoreRowPegs(score_row_start, y_space, rel_row_y, board.color_panel, num_board, rows, ctx_1, answer_images);
 
-	// Draw Row Player Hole boxes and Answer Hole box.
+	// Draw Row Player Hole boxes, Answer Hole box.
 	let box_allowance = x_box_space * canvas_1.width;
 	player_row_start = canvas_1.width - board.color_panel + box_allowance;
 	board.drawPlayerRowHole(player_row_start, rel_row_y, box_allowance, board.color_panel, hole_y, num_board, rows, ctx_1, ctx_2, GameCircle, board);
-	
-	
-	// Set and Draw Game answers below answer box.
 
 
-	// Draw the Game buttons - Back, Hint, New game, Check Row.
+	// Add Event Listeners to the dialog box actions.
+	newGameYes = document.getElementById('new-game-yes');
+	newGameNo = document.getElementById('new-game-no');
+	hintClose = document.getElementById('hint-close');
+	goBackYes = document.getElementById('go-back-yes');
+	goBackNo = document.getElementById('go-back-no'); 
+	newGameYes.addEventListener('click', function () {
+		startNewGame(board, color_images);
+	});
+	newGameNo.addEventListener('click', function() {
+		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
+	});
+	hintClose.addEventListener('click', function() {
+		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
+	});
+	goBackYes.addEventListener('click', function () {
+		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
+	});
+	goBackNo.addEventListener('click', function () {
+		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
+	});
 
+	// Draw the Game Controls - Check Row
+	let check_icon = game_ctrls_imgs[4];
+	board.drawCheckButton(check_icon, rel_row_y, ColorCircle, ctx_1);
 
+	// Add Other features - New Game, Hint, Back.
+	let newGame, backBtn, hintBtn;
 
+	// 1. New game button feature.
+	let newGameIcon = game_ctrls_imgs[2];
+	let positionX = board.width - (0.01 * board.width);
+	let positionY = board.height - (0.1 * board.row_grid_height);
+	let newGameOption = gamePopUpBox(board, 'newgame-dialog');
+	newGame = createGameControl(board, board.ctx_1, board.row_grid_height, 'newGameBtn', ColorCircle, newGameIcon, positionX, positionY, newGameOption);
+	addGameControl(board, newGame);
+
+	// 2. Back button feature.
+	let backBtnIcon = game_ctrls_imgs[1];
+	let goBackOption = gamePopUpBox(board, 'back-dialog');
+	positionX = (0.02 * board.width) + board.color_panel / 2;
+	backBtn = createGameControl(board, board.ctx_1, board.row_grid_height, 'backBtn', ColorCircle, backBtnIcon, positionX, positionY, goBackOption);
+	addGameControl(board, backBtn);
+
+	// 3. Hint button feature.
+	let hintBtnIcon = game_ctrls_imgs[3];
+	positionX = (board.width / 2) + board.color_panel / 4;
+	hintBtn = createGameControl(board, board.ctx_1, board.row_grid_height, 'hintBtn', ColorCircle, hintBtnIcon, positionX, positionY, getHint);
+	addGameControl(board, hintBtn);
+
+	console.log("Board is now", board);
+	console.log('Board controls are now', board.game_ctrls);
+	return board;
 }
 
 
-// function drawSideColorPanel() {
-// 	// Draws the Side Color Panel.
-// 	pass
-// }
+function createGameControl(boardItem, context, itemHeight, name, DetectionCircle, itemIcon, relativeX, relativeY, functionality) {
+	// Creates a functionality button used in the game.
+	// Adds this button to the game_ctrls of the board.
+	let newbtn, newArr, functionalArr, otherArr;
+	let iconImageButton = new GameControlButton(boardItem, itemHeight, name, itemIcon);
+	iconImageButton.drawButtonImage(boardItem, context, relativeX, relativeY, DetectionCircle, functionality);
+	return iconImageButton;
+}
 
-// function drawRowScoreBox() {
-// 	// Draws the Row Scoring Boxes.
-// 	pass
-// }
 
-// function drawPlayerRowBox() {
-// 	// Draws the Player Row Box.
-// 	pass
-// }
+function addGameControl(boardItem, controlItem) {
+	// Adds a functionality to the game control property in the board.
+	let ctrlsArr = controlItem.getButtonControl();
+	let ctrlsName = controlItem.name;
+	boardItem.game_ctrls[ctrlsName] = ctrlsArr;	
+}
+
+
+function mainGamePlay(board) {
+	// Define the scoring class used to score the images.
+	let scoreClass = new ScoreGame(board.game_answers);
+	board.scoreClass = scoreClass;
+
+	// Set Game answers for first round
+	let answers = [5, 8, 8, 1, 5, 7];
+	board.game_answers = answers;
+
+	window.setTimeout(function() {
+		// Draw the game answers.
+		let topRow = board.row_circles[0];
+		board.drawAnswer(board, topRow, color_images);
+	}, 400)
+
+	// While the state is true, play the game.
+	board.playGame(color_images, answer_images);
+}
 
 
 function preloadGameImages(image_files) {
