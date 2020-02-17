@@ -165,6 +165,9 @@ export class Board {
 			}
 			// Create the scoring peg item using the box details.
 			this.createScorePegs(board, answer_images);
+			// window.setTimeout(function() {
+			// 	this.createScorePegs(board, answer_images);
+			// });
 		}
 	}
 
@@ -346,14 +349,16 @@ export class Board {
 			posPegScale = posPeg.width / posPeg.height;
 			posPegHeight = rel_height;
 			posPegWidth = posPegHeight * posPegScale;
-			let posPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
+			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
+			// let posPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
 			// board.scoreRelPositions.push(posPegCoords); //Pos coords at idx 0.
 		}
 		colPeg.onload = () => {
 			colPegScale = colPeg.width / colPeg.height;
 			colPegHeight = rel_height;
 			colPegWidth = colPegHeight * colPegScale;
-			let colPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
+			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
+			// let colPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
 			// board.scoreRelPositions.push(colPegCoords); //Col coords at idx 1.
 		}
 	}
@@ -436,7 +441,7 @@ export class Board {
 		}
 		// Set these values to the board property.
 		scoreRelPositions.push(relativePoses);
-		return relativePoses;
+		// return relativePoses;
 		
 	}
 
