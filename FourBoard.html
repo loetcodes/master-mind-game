@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>MasterMind</title>
+	<title>M Rewritten</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="css/preloader.css">
@@ -19,11 +19,11 @@
 			<p class="text-content">Are you sure you want to quit this game?</p>
 		</div>
 		<div class="selection-options">
-			<a class="nav-link" href="javascript:resumeGameState('back-dialog', 'hint-dialog'); delay('home.html#main-pg')" target="">
+			<a id="go-back-yes" class="nav-link" href="javascript:delay('home.html#main-pg')" target="">
 				<div class="menu-title load-item initial-load">Yes
 				</div>
 			</a>
-			<a class="nav-link" href="javascript:void(0)" onclick="javascript:resumeGameState('back-dialog', 'hint-dialog')">
+			<a id="go-back-no" class="nav-link" href="javascript:void(0)">
 				<div class="menu-title load-item initial-load">No
 				</div>
 			</a>
@@ -36,10 +36,8 @@
 			<p class="text-content"><span id="hint-num" class="emphasis-num"> 3</span> hint(s) left</p>
 			<img id="hint-img" class="game-icon" src="images/08_X-Icon.png" alt="hint image">
 		</div>
-
-
 		<div class="selection-options">
-			<a class="nav-link" href="javascript:void(0)" onclick="javascript:resumeGameState('hint-dialog')">
+			<a id="hint-close" class="nav-link" href="javascript:void(0)">
 				<div class="load-item initial-load">x
 				</div>
 			</a>
@@ -52,11 +50,11 @@
 			<p class="text-content">Start a new game?</p>
 		</div>
 		<div class="selection-options">
-			<a class="nav-link" href="javascript:void(0)" onclick="javascript:startNewGame()">
+			<a id='new-game-yes' class="nav-link" href="javascript:void(0)">
 				<div class="menu-title load-item initial-load">Yes
 				</div>
 			</a>
-			<a class="nav-link" href="javascript:void(0)" onclick="javascript:resumeGameState('back-dialog', 'hint-dialog','newgame-dialog')">
+			<a id='new-game-no' class="nav-link" href="javascript:void(0)">
 				<div class="menu-title load-item initial-load">No
 				</div>
 			</a>
@@ -66,7 +64,6 @@
 	<!-- CSS Preloader -->
 	<div id="preloader" class="load-wrapper">
 		<div class="loader-back"></div>
-
 		<div id="loader-box">
 			<div class="loader-ball">
 		      <div class="ball ball-first" id="ball-1"></div>
@@ -86,6 +83,6 @@
 </body>
 
 <script type="text/javascript" src="js/preload.js"></script>
-<script type="text/javascript" src="js/four_board.js"></script>
+<script type="module" src="js/temp.js"></script>
 
 </html>
