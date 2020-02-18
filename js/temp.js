@@ -49,10 +49,16 @@ board_hole_url = setBoardUrls(num_board_holes);
 
 
 // INITIALIZE GAME VARIABLES AND ITEMS. -----------------------------
-init();
 
-//Play the game.
-mainGamePlay(mainBoard);
+let promise = new Promise(function(resolve, reject) {
+	mainBoard = init();
+	resolve(mainBoard);
+}).then((mainBoard) => {
+	console.log('Main board sucessfully initialized');
+	//Play the game.
+	mainGamePlay(mainBoard);
+
+});
 
 
 // FUNCTION DECLARATIONS --------------------------------------------
@@ -240,7 +246,6 @@ function generateHintItem(board, elementId) {
 			elementBox.style.maxWidth = `${boxDims["maxWidth"]}` + "px";
 			elementBox.style.marginLeft = `${boxDims["marginLeft"]}` + "px";
 			elementBox.style.marginTop = `${boxDims["marginTop"]}` + "px";
-
 			// Check if any hints are available.
 			if(totalHints > 0) {
 				// Random value between 0 and peg holes - 1.
