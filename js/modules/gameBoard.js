@@ -156,15 +156,17 @@ export class Board {
 			scoring_img_height = row_grid_height - (y_space * row_grid_height);
 			scoring_img_width = scoring_img_height * scoring_img_scale;
 			x_pos = score_row_start;
-			this.scoringBoxDetails['width'] = scoring_img_width;
-			this.scoringBoxDetails['height'] = scoring_img_height;
-			this.scoringBoxDetails['x_pos'] = x_pos;			
+			board.scoringBoxDetails['width'] = scoring_img_width;
+			board.scoringBoxDetails['height'] = scoring_img_height;
+			board.scoringBoxDetails['x_pos'] = x_pos;			
 			for (let i = 1; i <= rows; i++){
 				y_pos = (i * rel_row_height) + (row_grid_height - scoring_img_height) / 2;
 				ctx_1.drawImage(scoring_img, x_pos, y_pos, scoring_img_width, scoring_img_height);
 			}
 			// Create the scoring peg item using the box details.
-			this.createScorePegs(board, answer_images);
+			window.setTimeout(function() {
+				board.createScorePegs(board, answer_images);
+			}, 1000); 
 		}
 	}
 
@@ -329,55 +331,6 @@ export class Board {
 		}
 	}
 
-	createScorePegs(board, scoringImages) {
-		// Creates the score pegs and stores them without drawing them.
-		let posPegWidth, posPegHeight, colPegWidth, colPegHeight;
-		let posPegScale, colPegScale;
-		let posPegCoords, colPegCoords;
-		let scoringBox = board.scoringBoxDetails;
-		let boxHeight = scoringBox['height'];
-		let boxWidth = scoringBox['width'];
-		let boxStartX = scoringBox['x_pos'];
-		let rel_height = boxHeight / 2 - (0.2 * boxHeight);
-		let posPeg = scoringImages[1]
-		let colPeg = scoringImages[2];
-		let numPoses = board.boardSize;
-		posPeg.onload = () => {
-			posPegScale = posPeg.width / posPeg.height;
-			posPegHeight = rel_height;
-			posPegWidth = posPegHeight * posPegScale;
-			posPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
-			board.scoreRelPositions.push(posPegCoords);
-
-
-			// let posPegCoords;
-			// let promise = new Promise(function(resolve, reject) {
-			// 	let x = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
-			// 	resolve(x);
-			// }).then((x) => {
-			// 	console.log("Promise was successful");
-			// 	posPegCoords = x;
-			// 	board.scoreRelPositions.push(posPegCoords);
-			// });
-		}
-		colPeg.onload = () => {
-			colPegScale = colPeg.width / colPeg.height;
-			colPegHeight = rel_height;
-			colPegWidth = colPegHeight * colPegScale;
-			colPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
-			board.scoreRelPositions.push(colPegCoords);
-			
-			// let promise = new Promise(function(resolve, reject) {
-			// 	let x = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
-			// 	resolve(x);
-			// }).then((x) => {
-			// 	console.log("Promise was successful");
-			// 	colPegCoords = x;
-			// 	board.scoreRelPositions.push(colPegCoords);
-			// });
-		}
-	}
-
 	calculateRelativeScorePos(boardSize, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height, scoreRelPositions) {
 		// Calculates the relative x and y coordinates to place pegs on an image. Returns an array with the relative coordinates/positions.
 		let relativePoses;
@@ -455,7 +408,38 @@ export class Board {
 			relativePoses = calcSixBoard(6, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height);
 		}
 		return relativePoses;
-		
+	}
+
+	createScorePegs(board, scoringImages) {
+		// Creates the score pegs and stores them without drawing them.
+		let posPegWidth, posPegHeight, colPegWidth, colPegHeight;
+		let posPegScale, colPegScale;
+		let posPegCoords, colPegCoords;
+		let scoringBox = board.scoringBoxDetails;
+		let boxHeight = scoringBox['height'];
+		let boxWidth = scoringBox['width'];
+		let boxStartX = scoringBox['x_pos'];
+		let rel_height = boxHeight / 2 - (0.2 * boxHeight);
+		let posPeg = scoringImages[1]
+		let colPeg = scoringImages[2];
+		let numPoses = board.boardSize;
+		console.log('-------boxHeight is', boxHeight);
+		console.log('-------boxWidth is', boxWidth);
+		console.log('-------boxStart is', boxStartX);
+		posPeg.onload = () => {
+			posPegScale = posPeg.width / posPeg.height;
+			posPegHeight = rel_height;
+			posPegWidth = posPegHeight * posPegScale;
+			posPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
+			board.scoreRelPositions.push(posPegCoords);		
+		}
+		colPeg.onload = () => {
+			colPegScale = colPeg.width / colPeg.height;
+			colPegHeight = rel_height;
+			colPegWidth = colPegHeight * colPegScale;
+			colPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
+			board.scoreRelPositions.push(colPegCoords);
+		}
 	}
 
 	getMousePosition(canvas, evt) {
@@ -493,6 +477,7 @@ export class Board {
 		let game_state = board.state;
 		let curr_row = board.row_answers;
 		let row_player_answers = [];
+		let relativePoses = board.scoreRelPositions;
 		if (curr_row.includes(0)) {
 			// If one selects submit before all poses have been filled.
 			return;
@@ -501,33 +486,33 @@ export class Board {
 			curr_row.forEach((img_obj) => {
 				row_player_answers.push(img_obj.img_number);
 			});
-
 			// Score the players answer into black and white pegs
 			let rowScores = board.scoreClass.scoreRowValues(board.game_answers, row_player_answers);
-
 			// Draw the resulting pegs based on the row_scores
 			let numPosAns, numColAns, posCoords, colCoords;
 			let counter = 0;
 			numPosAns = rowScores[1];
 			numColAns = rowScores[2];
-			if (board.scoreRelPositions !== []) {
-				posCoords = board.scoreRelPositions[0];
-				colCoords = board.scoreRelPositions[1];
+			if (relativePoses !== []) {
+				if (relativePoses.length > 1) {
+					posCoords = board.scoreRelPositions[0];
+					colCoords = board.scoreRelPositions[1];
+				} else if (relativePoses.length == 1) {
+					posCoords = board.scoreRelPositions[0];
+					colCoords = board.scoreRelPositions[0];
+				}
 			} else {
 				// Calculate relative positions;
 				console.log('board.scoreRelPositions is not assigned');
 			}
-
 			// Calculate height to curr play row.
 			let yAbs = board.rel_row_h * board.curr_play_row;
-
 			// Draw the pos pegs and col pegs if any.
 			let ctx = board.ctx_2;
 			let pospegImg = board.answerImgs[1];
 			let colpegImg = board.answerImgs[2];
 			counter = board.checkPegPositions(numPosAns, pospegImg, posCoords, counter, ctx, yAbs);
 			counter = board.checkPegPositions(numColAns, colpegImg, colCoords, counter, ctx,yAbs);
-
 			// If all pegs, move to the next row, clear the player answers, move the submit/check button to the next row.
 			if (numPosAns == board.boardSize) {
 				// Game won, Reveal answers, Rate game.
