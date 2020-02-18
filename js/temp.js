@@ -51,8 +51,6 @@ board_hole_url = setBoardUrls(num_board_holes);
 // INITIALIZE GAME VARIABLES AND ITEMS. -----------------------------
 init();
 
-//Play the game.
-mainGamePlay(mainBoard);
 
 
 // FUNCTION DECLARATIONS --------------------------------------------
@@ -65,8 +63,8 @@ function init(){
 	sizeInitialCanvas(num_board_holes, width, height, canvas_1, canvas_2);
 
 	// Preload the game images
-	color_images = preloadGameImages(peg_urls);
 	num_board = preloadGameImages(board_hole_url);
+	color_images = preloadGameImages(peg_urls);
 	game_ctrls_imgs = preloadGameImages(icons_url);
 	answer_images = preloadGameImages(answer_url);
 	initialized = true;
@@ -77,11 +75,10 @@ function init(){
 	baseValues = codeAnswers.generateRandomNumbers(num_board_holes);
 	codeAnsRound = codeAnswers.newGameAnswers(baseValues, num_board_holes);
 
-	// Draw Board graphics and initialize the item objects, then set this main Board.
+	// Draw Board graphics and initialize the item objects, set event listeners.
 	mainBoard = drawBoardItems(num_board_holes, codeAnswers);
 	mainBoard.game_answers = codeAnsRound;
 	mainBoard.color_images = color_images;
-	return mainBoard;
 }
 
 
@@ -353,7 +350,9 @@ function drawBoardItems(num_board_holes, codeAnswer) {
 
 	// Draw the Game Controls - Check Row
 	let check_icon = game_ctrls_imgs[4];
-	board.drawCheckButton(check_icon, rel_row_y, ColorCircle, ctx_1);
+	board.drawCheckButton(check_icon, rel_row_y, ColorCircle, ctx_1, board);
+
+	mainGamePlay(board);
 	
 	return board;
 }
@@ -394,8 +393,6 @@ function mainGamePlay(board) {
 	let starsBack = game_ctrls_imgs[5];
 	let starsFront = game_ctrls_imgs[6];
 	gameRating.drawStarImgs(board, board.width, board.ctx_1, starsBack, starsFront, board.row_grid_height);
-
-	console.log('BOARD AFTER STARS IS NOW', board);
 
 	board.playGame(color_images, answer_images);
 }

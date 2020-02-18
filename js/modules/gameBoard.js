@@ -106,7 +106,7 @@ export class Board {
 		this.scoringBoxDetails = {};
 		this.answerBoxDetails = {};
 		this.scoringPegsCoords = [];
-		this.scoreRelPositions = [];
+		this.scoreRelPositions = {};
 		this.answerImgs = null;
 	}
 
@@ -152,19 +152,23 @@ export class Board {
 		scoring_img = num_board[2];
 		scoring_img.onload = () => {
 			let x_pos, y_pos;
+			let boxDetails = {};
 			scoring_img_scale = scoring_img.width / scoring_img.height;
 			scoring_img_height = row_grid_height - (y_space * row_grid_height);
 			scoring_img_width = scoring_img_height * scoring_img_scale;
 			x_pos = score_row_start;
 			board.scoringBoxDetails['width'] = scoring_img_width;
 			board.scoringBoxDetails['height'] = scoring_img_height;
-			board.scoringBoxDetails['x_pos'] = x_pos;			
+			board.scoringBoxDetails['x_pos'] = x_pos;
+			boxDetails['width'] = scoring_img_width;
+			boxDetails['height'] = scoring_img_height;
+			boxDetails['x_pos'] = x_pos;		
 			for (let i = 1; i <= rows; i++){
 				y_pos = (i * rel_row_height) + (row_grid_height - scoring_img_height) / 2;
 				ctx_1.drawImage(scoring_img, x_pos, y_pos, scoring_img_width, scoring_img_height);
 			}
-			// Create the scoring peg item using the box details.
-			board.createScorePegs(board, answer_images);
+			// Create the scoring peg item using the box details and draw check button.
+			board.createScorePegs(board, answer_images, boxDetails);
 		}
 	}
 
@@ -329,12 +333,12 @@ export class Board {
 		}
 	}
 
-	createScorePegs(board, scoringImages) {
+	createScorePegs(board, scoringImages, boxDetails) {
 		// Creates the score pegs and stores them without drawing them.
 		let posPegWidth, posPegHeight, colPegWidth, colPegHeight;
 		let posPegScale, colPegScale;
 		let posPegAnsCoords, colPegAnsCoords;
-		let scoringBox = board.scoringBoxDetails;
+		let scoringBox = boxDetails;
 		let boxHeight = scoringBox['height'];
 		let boxWidth = scoringBox['width'];
 		let boxStartX = scoringBox['x_pos'];
@@ -346,18 +350,19 @@ export class Board {
 			posPegScale = posPeg.width / posPeg.height;
 			posPegHeight = rel_height;
 			posPegWidth = posPegHeight * posPegScale;
-			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
+			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions, 0);
 		}
 		colPeg.onload = () => {
 			colPegScale = colPeg.width / colPeg.height;
 			colPegHeight = rel_height;
 			colPegWidth = colPegHeight * colPegScale;
-			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
+			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions, 1);
 		}
 	}
 
-	calculateRelativeScorePos(boardSize, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height, scoreRelPositions) {
+	calculateRelativeScorePos(boardSize, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height, scoreRelPositions, idx) {
 		// Calculates the relative x and y coordinates to place pegs on an image. Returns an array with the relative coordinates/positions.
+		console.log("Calculating relative Score Positions")
 		let relativePoses;
 
 		function calcFourBoard(size, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height) {
@@ -433,7 +438,7 @@ export class Board {
 			relativePoses = calcSixBoard(6, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height);
 		}
 		// Set these values to the board property.
-		scoreRelPositions.push(relativePoses);
+		scoreRelPositions[idx] = relativePoses;
 		
 	}
 
