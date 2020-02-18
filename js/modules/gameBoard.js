@@ -349,17 +349,29 @@ export class Board {
 			posPegScale = posPeg.width / posPeg.height;
 			posPegHeight = rel_height;
 			posPegWidth = posPegHeight * posPegScale;
-			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
-			// let posPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
-			// board.scoreRelPositions.push(posPegCoords); //Pos coords at idx 0.
+			let posPegCoords;
+			let promise = new Promise(function(resolve, reject) {
+				let x = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
+				setTimeout(() => resolve(x), 1000);
+			}).then((x) => {
+				console.log("Promise was successful");
+				posPegCoords = x;
+				board.scoreRelPositions.push(posPegCoords);
+			});
 		}
 		colPeg.onload = () => {
 			colPegScale = colPeg.width / colPeg.height;
 			colPegHeight = rel_height;
 			colPegWidth = colPegHeight * colPegScale;
-			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
-			// let colPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
-			// board.scoreRelPositions.push(colPegCoords); //Col coords at idx 1.
+			let colPegCoords;
+			let promise = new Promise(function(resolve, reject) {
+				let x = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
+				setTimeout(() => resolve(x), 1000);
+			}).then((x) => {
+				console.log("Promise was successful");
+				colPegCoords = x;
+				board.scoreRelPositions.push(colPegCoords);
+			});
 		}
 	}
 
@@ -440,8 +452,8 @@ export class Board {
 			relativePoses = calcSixBoard(6, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height);
 		}
 		// Set these values to the board property.
-		scoreRelPositions.push(relativePoses);
-		// return relativePoses;
+		// scoreRelPositions.push(relativePoses);
+		return relativePoses;
 		
 	}
 
@@ -490,27 +502,34 @@ export class Board {
 			});
 
 			// Score the players answer into black and white pegs
-			let row_scores = board.scoreClass.scoreRowValues(board.game_answers, row_player_answers);
+			let rowScores = board.scoreClass.scoreRowValues(board.game_answers, row_player_answers);
 
 			// Draw the resulting pegs based on the row_scores
-			let num_pos_ans = row_scores[1];
-			let num_col_ans = row_scores[2];
+			let numPosAns, numColAns, posCoords, colCoords;
 			let counter = 0;
-			let pos_coords = board.scoreRelPositions[0];
-			let col_coords = board.scoreRelPositions[1];
+			numPosAns = rowScores[1];
+			numColAns = rowScores[2];
+			if (board.scoreRelPositions !== undefined) {
+				posCoords = board.scoreRelPositions[0];
+				colCoords = board.scoreRelPositions[1];
+			} else {
+				// Calculate relative positions;
+				console.log('board.scoreRelPositions is UNDEFINED');
+
+			}
 
 			// Calculate height to curr play row.
-			let y_abs = board.rel_row_h * board.curr_play_row;
+			let yAbs = board.rel_row_h * board.curr_play_row;
 
 			// Draw the pos pegs and col pegs if any.
 			let ctx = board.ctx_2;
 			let pospegImg = board.answerImgs[1];
 			let colpegImg = board.answerImgs[2];
-			counter = board.checkPegPositions(num_pos_ans, pospegImg, pos_coords, counter, ctx, y_abs);
-			counter = board.checkPegPositions(num_col_ans, colpegImg, col_coords, counter, ctx, y_abs);
+			counter = board.checkPegPositions(numPosAns, pospegImg, posCoords, counter, ctx, yAbs);
+			counter = board.checkPegPositions(numColAns, colpegImg, colCoords, counter, ctx,yAbs);
 
 			// If all pegs, move to the next row, clear the player answers, move the submit/check button to the next row.
-			if (num_pos_ans == board.boardSize) {
+			if (numPosAns == board.boardSize) {
 				// Game won, Reveal answers, Rate game.
 				board.game_state = false;
 				// Draw game answers.
@@ -530,7 +549,6 @@ export class Board {
 				result = board.rateGame(board, 0);
 				board.moveCheckButton('checkBtn', board.curr_play_row);
 			}
-
 			// Reset the row poses to initial state
 			board.row_answers = board.row_answers.fill(0);
 			// Calculate game result if done
@@ -694,7 +712,5 @@ export class Board {
 
 		}
 		return [starRating, ratingMessage];
-
 	}
-
 }
