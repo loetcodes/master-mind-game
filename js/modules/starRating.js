@@ -28,7 +28,6 @@ export class RatingSystem {
         let count = 0;
         for (let value of rateObj) {
             let temp = [];
-            console.log("Value is", value);
             for (let i = 1; i <= value; i ++) {
                 temp.push(count);
                 count ++;
