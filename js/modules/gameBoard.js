@@ -165,9 +165,6 @@ export class Board {
 			}
 			// Create the scoring peg item using the box details.
 			this.createScorePegs(board, answer_images);
-			// window.setTimeout(function() {
-			// 	this.createScorePegs(board, answer_images);
-			// });
 		}
 	}
 
@@ -336,7 +333,7 @@ export class Board {
 		// Creates the score pegs and stores them without drawing them.
 		let posPegWidth, posPegHeight, colPegWidth, colPegHeight;
 		let posPegScale, colPegScale;
-		let posPegAnsCoords, colPegAnsCoords;
+		let posPegCoords, colPegCoords;
 		let scoringBox = board.scoringBoxDetails;
 		let boxHeight = scoringBox['height'];
 		let boxWidth = scoringBox['width'];
@@ -349,29 +346,35 @@ export class Board {
 			posPegScale = posPeg.width / posPeg.height;
 			posPegHeight = rel_height;
 			posPegWidth = posPegHeight * posPegScale;
-			let posPegCoords;
-			let promise = new Promise(function(resolve, reject) {
-				let x = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
-				setTimeout(() => resolve(x), 1000);
-			}).then((x) => {
-				console.log("Promise was successful");
-				posPegCoords = x;
-				board.scoreRelPositions.push(posPegCoords);
-			});
+			posPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
+			board.scoreRelPositions.push(posPegCoords);
+
+
+			// let posPegCoords;
+			// let promise = new Promise(function(resolve, reject) {
+			// 	let x = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions);
+			// 	resolve(x);
+			// }).then((x) => {
+			// 	console.log("Promise was successful");
+			// 	posPegCoords = x;
+			// 	board.scoreRelPositions.push(posPegCoords);
+			// });
 		}
 		colPeg.onload = () => {
 			colPegScale = colPeg.width / colPeg.height;
 			colPegHeight = rel_height;
 			colPegWidth = colPegHeight * colPegScale;
-			let colPegCoords;
-			let promise = new Promise(function(resolve, reject) {
-				let x = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
-				setTimeout(() => resolve(x), 1000);
-			}).then((x) => {
-				console.log("Promise was successful");
-				colPegCoords = x;
-				board.scoreRelPositions.push(colPegCoords);
-			});
+			colPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
+			board.scoreRelPositions.push(colPegCoords);
+			
+			// let promise = new Promise(function(resolve, reject) {
+			// 	let x = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions);
+			// 	resolve(x);
+			// }).then((x) => {
+			// 	console.log("Promise was successful");
+			// 	colPegCoords = x;
+			// 	board.scoreRelPositions.push(colPegCoords);
+			// });
 		}
 	}
 
@@ -451,8 +454,6 @@ export class Board {
 		} else if (boardSize === 6) {
 			relativePoses = calcSixBoard(6, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height);
 		}
-		// Set these values to the board property.
-		// scoreRelPositions.push(relativePoses);
 		return relativePoses;
 		
 	}
@@ -509,13 +510,12 @@ export class Board {
 			let counter = 0;
 			numPosAns = rowScores[1];
 			numColAns = rowScores[2];
-			if (board.scoreRelPositions !== undefined) {
+			if (board.scoreRelPositions !== []) {
 				posCoords = board.scoreRelPositions[0];
 				colCoords = board.scoreRelPositions[1];
 			} else {
 				// Calculate relative positions;
-				console.log('board.scoreRelPositions is UNDEFINED');
-
+				console.log('board.scoreRelPositions is not assigned');
 			}
 
 			// Calculate height to curr play row.
