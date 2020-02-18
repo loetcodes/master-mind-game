@@ -67,8 +67,8 @@ function init(){
 	// Preload the game images
 	color_images = preloadGameImages(peg_urls);
 	num_board = preloadGameImages(board_hole_url);
-	game_ctrls_imgs = preloadGameImages(icons_url);
 	answer_images = preloadGameImages(answer_url);
+	game_ctrls_imgs = preloadGameImages(icons_url);
 	initialized = true;
 
 	// Create first round of game answers.
@@ -294,7 +294,7 @@ function drawBoardItems(num_board_holes, codeAnswer) {
 	board.drawLeftSidePegs(peg_colors, edge_size, color_panel, color_pegs, color_images, ColorCircle, ctx_1);
 	color_pegs = board.color_pegs;
 	
-	// Draw the Row Scoring boxes and then Create Scoring Pegs for the game.
+	// Draw the Row Scoring boxes.
 	let rows = 10;
 	score_row_start = board.color_panel + x_space * canvas_1.width;
 	board.drawScoreRowPegs(score_row_start, y_space, rel_row_y, board.color_panel, num_board, rows, ctx_1, answer_images);
@@ -326,11 +326,8 @@ function drawBoardItems(num_board_holes, codeAnswer) {
 		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
 	});
 
-	// Draw the Game Controls - Check Row
-	let check_icon = game_ctrls_imgs[4];
-	board.drawCheckButton(check_icon, rel_row_y, ColorCircle, ctx_1);
 
-	// Add Other features - New Game, Hint, Back.
+	// Add Features - New Game, Hint, Back.
 	let newGame, backBtn, hintBtn;
 
 	// 1. New game button feature.
@@ -354,6 +351,10 @@ function drawBoardItems(num_board_holes, codeAnswer) {
 	positionX = (board.width / 2) + board.color_panel / 4;
 	hintBtn = createGameControl(board, board.ctx_1, board.row_grid_height, 'hintBtn', ColorCircle, hintBtnIcon, positionX, positionY, getHint);
 	addGameControl(board, hintBtn);
+
+	// Draw the Game Controls - Check Row
+	let check_icon = game_ctrls_imgs[4];
+	board.drawCheckButton(check_icon, rel_row_y, ColorCircle, ctx_1);
 	return board;
 }
 
