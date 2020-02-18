@@ -49,16 +49,10 @@ board_hole_url = setBoardUrls(num_board_holes);
 
 
 // INITIALIZE GAME VARIABLES AND ITEMS. -----------------------------
+init();
 
-let promise = new Promise(function(resolve, reject) {
-	mainBoard = init();
-	resolve(mainBoard);
-}).then((mainBoard) => {
-	console.log('Main board sucessfully initialized');
-	//Play the game.
-	mainGamePlay(mainBoard);
-
-});
+//Play the game.
+mainGamePlay(mainBoard);
 
 
 // FUNCTION DECLARATIONS --------------------------------------------
