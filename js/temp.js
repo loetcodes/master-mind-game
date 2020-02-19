@@ -1,8 +1,10 @@
 /* Javascript for MasterMind 2.0 */
 
 import {ScoreGame} from "./modules/gameScoring.js"
+import {AnswerGenerator} from "./modules/gameAnswerGenerator.js"
 import {BoardCanvas, Board, ColorCircle, GameCircle} from "./modules/gameBoard.js"
 import {GameControlButton} from "./modules/gameControls.js"
+import {ratingMsgs, RatingSystem} from "./modules/starRating.js"
 
 
 // The urls for the pegs, board, icon and answer images to be used in the game.
@@ -10,6 +12,8 @@ let peg_colors = 8;
 let peg_urls = ["./images/circle_pegs/04_Peg_navyblue.png", "./images/circle_pegs/04_Peg_brown.png", "./images/circle_pegs/04_Peg_green.png", "./images/circle_pegs/04_Peg_teal.png", "./images/circle_pegs/04_Peg_purple.png", "./images/circle_pegs/04_Peg_lightgold.png", "./images/circle_pegs/04_Peg_pink.png", "./images/circle_pegs/04_Peg_red.png"];
 let icons_url = ["./images/06_Buttons_back.png", "./images/06_Buttons_new_game.png", "./images/06_Buttons_hint.png", "./images/06_Buttons_check_answer.png", "./images/09_3_Stars_black.png", "./images/09_3_Stars_gold.png"];
 let answer_url = ["./images/05_Answer_red_2.png", "./images/05_Answer_white_2.png"];
+let noHintsUrl = "./images/08_X-Icon.png";
+
 
 // The urls for the board holes and answer pegs for 4, 5 and 6 boards.
 let board_hole_url;
@@ -31,7 +35,7 @@ let color_pegs = []; // stores the color pegs shapes
 let preloaded = false;
 let initialized = false;
 let hintsGiven = [];
-let mainBoard;
+let mainBoard, codeAnswers;
 let newGameYes, newGameNo, hintClose, goBackYes, goBackNo;
 let popUpItems = ['back-dialog', 'hint-dialog','newgame-dialog']; 
 
@@ -47,11 +51,9 @@ board_hole_url = setBoardUrls(num_board_holes);
 // INITIALIZE GAME VARIABLES AND ITEMS. -----------------------------
 init();
 
-//Play the game.
-mainGamePlay(mainBoard);
+
 
 // FUNCTION DECLARATIONS --------------------------------------------
-
 function init(){
 	// Get game canvas
 	canvas_1 = document.getElementById('game-bottom');
@@ -61,17 +63,22 @@ function init(){
 	sizeInitialCanvas(num_board_holes, width, height, canvas_1, canvas_2);
 
 	// Preload the game images
-	color_images = preloadGameImages(peg_urls);
 	num_board = preloadGameImages(board_hole_url);
+	color_images = preloadGameImages(peg_urls);
 	game_ctrls_imgs = preloadGameImages(icons_url);
 	answer_images = preloadGameImages(answer_url);
 	initialized = true;
 
-	// Draw Board graphics and initialize the item objects, then set this main Board.
-	mainBoard = drawBoardItems(num_board_holes);
+	// Create first round of game answers.
+	let baseValues, codeAnsRound;
+	codeAnswers = new AnswerGenerator(num_board_holes);
+	baseValues = codeAnswers.generateRandomNumbers(num_board_holes);
+	codeAnsRound = codeAnswers.newGameAnswers(baseValues, num_board_holes);
 
-	return mainBoard;
-
+	// Draw Board graphics and initialize the item objects, set event listeners.
+	mainBoard = drawBoardItems(num_board_holes, codeAnswers);
+	mainBoard.game_answers = codeAnsRound;
+	mainBoard.color_images = color_images;
 }
 
 
@@ -111,7 +118,6 @@ function sizeInitialCanvas(num_board_holes, width, height, canvas_1, canvas_2) {
 	ctx_1 = canvas_1.getContext('2d');
 	ctx_1.width = canvas_size[width];
 	ctx_1.height = canvas_size[height];
-
 	ctx_2 = canvas_2.getContext('2d');
 	ctx_2.width = canvas_size[width];
 	ctx_2.height = canvas_size[height];
@@ -150,9 +156,9 @@ function createDialogBoxSize(maxWidth) {
 	dialogDims["maxWidth"] = maxWidth;
 	dialogDims["marginLeft"] = 0 - dialogWidth / 2;
 	dialogDims["marginTop"] = 0 - dialogHeight / 2;
-
 	return dialogDims;
 }
+
 
 function gamePopUpBox(board, elementIdName) {
 	// Returns a function that opens a dialog box.
@@ -160,15 +166,12 @@ function gamePopUpBox(board, elementIdName) {
 	let elementBox = document.getElementById(elementIdName);
 	let otherElementIds = [];
 	for (let item of popUpItems) {
-		if (item !== elementIdName) {
-			otherElementIds.push(item);
-		}
+		if (item !== elementIdName) {otherElementIds.push(item);}
 	}
 
-	function newG() {
+	function gameFunc() {
 		// Close any dialog boxes that may have been open.
 		resumeGameState(board, ...otherElementIds);
-
 		let boxDims = createDialogBoxSize(maxBoxWidth);
 		elementBox.style.width = `${boxDims["dialogWidth"]}` + "px";
 		elementBox.style.height = `${boxDims["dialogHeight"]}` + "px";
@@ -176,18 +179,15 @@ function gamePopUpBox(board, elementIdName) {
 		elementBox.style.marginLeft = `${boxDims["marginLeft"]}` + "px";
 		elementBox.style.marginTop = `${boxDims["marginTop"]}` + "px";
 		elementBox.style.display = "flex";
-
 		// set game state to false
 		board.game_state = false;
 	}
-	return newG;
-
+	return gameFunc;
 }
 
 
-function startNewGame(board, color_images) {
-	let roundAnswers;
-	let topRow;
+function startNewGame(board, codeAnswer, color_images) {
+	let roundAnswers, topRow, baseValues, newAnswers;
 	// Close any other dialog boxes.
 	resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
 
@@ -205,25 +205,70 @@ function startNewGame(board, color_images) {
 	// Return check answer back to start.
 	board.moveCheckButton('checkBtn', board.curr_play_row);
 
-	// Clear current game answers from canvas, drawing background graphics on ctx_1 including peg holder.
+	// Clear current game answers from canvas, drawing graphics on ctx_1.
 	board.drawGameAnswersBox(board);
 
-	// Generate new game answers and draw the game answers.
-	// roundAnswers = answerSet.generateGameAnswer(board.boardSize);
-	roundAnswers = [8, 2, 8, 5, 1, 2];
-	board.game_answers = roundAnswers;
+	// Generate new game answers and set the game answers.
+	baseValues = board.game_answers;
+	newAnswers = codeAnswer.newGameAnswers(baseValues, board.boardSize);
+	board.game_answers = newAnswers;
 
 	// Draw the game round answers.
 	topRow = board.row_circles[0];
 	board.drawAnswer(board, topRow, color_images);
 }
 
-function getHint() {
-	console.log('The function when clicked on  GET GAME HINT-----');
+function getRandomRangeNum(min, max) {
+	// Returns a random number within a min-max range
+	return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function generateHintItem(board, elementId) {
+	let maxBoxWidth = board.width;
+	let hintImg = document.getElementById("hint-img");
+	let hintCount = document.getElementById("hint-num");
+	let elementBox = document.getElementById(elementId);
+
+	function getHint() {
+		if (board.game_state) {
+			let boxDims = createDialogBoxSize(maxBoxWidth);
+			elementBox.style.width = `${boxDims["dialogWidth"]}` + "px";
+			elementBox.style.height = `${boxDims["dialogHeight"]}` + "px";
+			elementBox.style.maxWidth = `${boxDims["maxWidth"]}` + "px";
+			elementBox.style.marginLeft = `${boxDims["marginLeft"]}` + "px";
+			elementBox.style.marginTop = `${boxDims["marginTop"]}` + "px";
+
+			// Check if any hints are available.
+			if(totalHints > 0) {
+				// Random value between 0 and peg holes - 1.
+				let numHoles = board.boardSize;
+				let answerIdx = getRandomRangeNum(0, numHoles);
+				while (hintsGiven.includes(answerIdx)) {
+					answerIdx = getRandomRangeNum(0, numHoles);
+				}
+				// Add hint index to hint arr, set img src, deduct from total hints.
+				hintsGiven.push(answerIdx);
+				let imgItem = color_images[board.game_answers[answerIdx]]
+				let imgSrc = imgItem.src;
+				hintImg.src = imgSrc;
+				totalHints --;
+				hintCount.innerHTML = totalHints;
+			} else {
+				// No more hints available. 
+				let imgSrc = noHintsUrl;
+				hintImg.src = imgSrc;
+				hintCount.innerHTML = "No";
+			}
+			// Display the hint item and set game state to false.
+			elementBox.style.display = "grid";
+			board.game_state = false;
+		}
+	}
+	return getHint;
 }
 
 
-function drawBoardItems(num_board_holes) {
+function drawBoardItems(num_board_holes, codeAnswer) {
 	// set edge size variable.
 	let spaces = {
 		4 : {edge_size: 0.02, x_space : 0.012, y_space : 0.10, x_box_space : 0.005, hole_y : 0.12, rel_row_y: 0},
@@ -254,8 +299,7 @@ function drawBoardItems(num_board_holes) {
 	// Draw Row Player Hole boxes, Answer Hole box.
 	let box_allowance = x_box_space * canvas_1.width;
 	player_row_start = canvas_1.width - board.color_panel + box_allowance;
-	board.drawPlayerRowHole(player_row_start, rel_row_y, box_allowance, board.color_panel, hole_y, num_board, rows, ctx_1, ctx_2, GameCircle, board);
-
+	board.drawPlayerRowHole(player_row_start, rel_row_y, box_allowance, board.color_panel, hole_y, num_board, rows, ctx_1, ctx_2, GameCircle, board, color_images);
 
 	// Add Event Listeners to the dialog box actions.
 	newGameYes = document.getElementById('new-game-yes');
@@ -264,7 +308,7 @@ function drawBoardItems(num_board_holes) {
 	goBackYes = document.getElementById('go-back-yes');
 	goBackNo = document.getElementById('go-back-no'); 
 	newGameYes.addEventListener('click', function () {
-		startNewGame(board, color_images);
+		startNewGame(board, codeAnswer, color_images);
 	});
 	newGameNo.addEventListener('click', function() {
 		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
@@ -278,10 +322,6 @@ function drawBoardItems(num_board_holes) {
 	goBackNo.addEventListener('click', function () {
 		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
 	});
-
-	// Draw the Game Controls - Check Row
-	let check_icon = game_ctrls_imgs[4];
-	board.drawCheckButton(check_icon, rel_row_y, ColorCircle, ctx_1);
 
 	// Add Other features - New Game, Hint, Back.
 	let newGame, backBtn, hintBtn;
@@ -303,12 +343,17 @@ function drawBoardItems(num_board_holes) {
 
 	// 3. Hint button feature.
 	let hintBtnIcon = game_ctrls_imgs[3];
+	let getHint = generateHintItem(board, 'hint-dialog');
 	positionX = (board.width / 2) + board.color_panel / 4;
 	hintBtn = createGameControl(board, board.ctx_1, board.row_grid_height, 'hintBtn', ColorCircle, hintBtnIcon, positionX, positionY, getHint);
 	addGameControl(board, hintBtn);
 
-	console.log("Board is now", board);
-	console.log('Board controls are now', board.game_ctrls);
+	// Draw the Game Controls - Check Row
+	let check_icon = game_ctrls_imgs[4];
+	board.drawCheckButton(check_icon, rel_row_y, ColorCircle, ctx_1, board);
+
+	mainGamePlay(board);
+	
 	return board;
 }
 
@@ -336,17 +381,19 @@ function mainGamePlay(board) {
 	let scoreClass = new ScoreGame(board.game_answers);
 	board.scoreClass = scoreClass;
 
-	// Set Game answers for first round
-	let answers = [5, 8, 8, 1, 5, 7];
-	board.game_answers = answers;
+	// Define the rating system to be used when scoring the game.
+	let minRating = 0;
+	let maxRating = 3;
+	let ratingRatio = [1, 2, 3, 2, 2, 1]; // Ratios sum should match highestLevel + 1
+	let highestLevel = 10;
+	let gameRating = new RatingSystem (maxRating, minRating, ratingRatio, highestLevel);
+	gameRating.msgRating(ratingRatio, highestLevel);
+	board.ratingSys = gameRating;
+	// Since rating is defined, draw stars as well.
+	let starsBack = game_ctrls_imgs[5];
+	let starsFront = game_ctrls_imgs[6];
+	gameRating.drawStarImgs(board, board.width, board.ctx_1, starsBack, starsFront, board.row_grid_height);
 
-	window.setTimeout(function() {
-		// Draw the game answers.
-		let topRow = board.row_circles[0];
-		board.drawAnswer(board, topRow, color_images);
-	}, 400)
-
-	// While the state is true, play the game.
 	board.playGame(color_images, answer_images);
 }
 

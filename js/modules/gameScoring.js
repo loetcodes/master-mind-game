@@ -44,8 +44,4 @@ export class ScoreGame {
         return result;
     }
 
-    scoreFullBoard(){
-        
-    }
-
 }

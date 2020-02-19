@@ -103,11 +103,10 @@ export class Board {
 		this.row_answers = new Array (board_size).fill(0);
 		this.game_answers = [];
 		this.col_selected = false; // For storing colors that are clicked on;
-		this.scoringClass = null;
 		this.scoringBoxDetails = {};
 		this.answerBoxDetails = {};
 		this.scoringPegsCoords = [];
-		this.scoreRelPositions = [];
+		this.scoreRelPositions = {};
 		this.answerImgs = null;
 	}
 
@@ -138,11 +137,8 @@ export class Board {
 			let img = color_images[k];
 			img.onload = function () {
 				ctx_1.drawImage(img, x_pos, y_pos, img_width, img_height);
-				// color_peg.drawColorCircle();
 			}
-
 		}
-	
 	}
 
 	drawScoreRowPegs (score_row_start, y_space, rel_row_y = 0, color_panel, num_board, rows, ctx_1, answer_images) {
@@ -152,29 +148,31 @@ export class Board {
 		let row_grid_height = this.row_grid_height;
 		let rel_row_height = this.row_grid_height + rel_row_y * this.height;
 		this.rel_row_h = rel_row_height; // Used later to place pegs in positions.
-		// this.row = rows;
 		let board = this;
-		console.log('this is', board);
 		scoring_img = num_board[2];
 		scoring_img.onload = () => {
 			let x_pos, y_pos;
+			let boxDetails = {};
 			scoring_img_scale = scoring_img.width / scoring_img.height;
 			scoring_img_height = row_grid_height - (y_space * row_grid_height);
 			scoring_img_width = scoring_img_height * scoring_img_scale;
 			x_pos = score_row_start;
-			this.scoringBoxDetails['width'] = scoring_img_width;
-			this.scoringBoxDetails['height'] = scoring_img_height;
-			this.scoringBoxDetails['x_pos'] = x_pos;			
+			board.scoringBoxDetails['width'] = scoring_img_width;
+			board.scoringBoxDetails['height'] = scoring_img_height;
+			board.scoringBoxDetails['x_pos'] = x_pos;
+			boxDetails['width'] = scoring_img_width;
+			boxDetails['height'] = scoring_img_height;
+			boxDetails['x_pos'] = x_pos;		
 			for (let i = 1; i <= rows; i++){
 				y_pos = (i * rel_row_height) + (row_grid_height - scoring_img_height) / 2;
 				ctx_1.drawImage(scoring_img, x_pos, y_pos, scoring_img_width, scoring_img_height);
 			}
-			// Create the scoring peg item using the box details.
-			this.createScorePegs(board, answer_images);
+			// Create the scoring peg item using the box details and draw check button.
+			board.createScorePegs(board, answer_images, boxDetails);
 		}
 	}
 
-	drawPlayerRowHole(row_start, rel_row_y=0, box_allowance, color_panel, hole_y, num_board, rows, ctx_1, ctx_2, GameCircle, board) {
+	drawPlayerRowHole(row_start, rel_row_y=0, box_allowance, color_panel, hole_y, num_board, rows, ctx_1, ctx_2, GameCircle, board, color_images) {
 		// Draws the row holes for each player and creates circle detection area.
 		let hole_img, hole_img_width, hole_img_height, hole_img_scale;
 		let ans_box_width, ans_box_height, ans_top_x, ans_top_y;
@@ -243,9 +241,6 @@ export class Board {
 			x_center = (top_x  + spacing / 2 + radius) + (diameter +  spacing) * (j - 1);
 			let circle_object = new GameCircle(x_center, y_center, radius, "blue", false);
 			row_circles.push(circle_object);
-	
-			// Draw the circle. Remove the draw function once everything is outlined. FINAL STEPS
-			// circle_object.drawCircle(ctx, x_center, y_center, radius, "blue");
 		}
 		return row_circles;
 	}
@@ -304,7 +299,6 @@ export class Board {
 			currHeight = currPeg.img_height;
 			xPos = circle.x - currPeg.img_width / 2;
 			yPos = circle.y - currPeg.img_height / 2;
-
 			// Always draw on bottom canvas.
 			ctx_1.drawImage(pegImg, xPos, yPos, currWidth, currHeight);
 		})
@@ -339,12 +333,12 @@ export class Board {
 		}
 	}
 
-	createScorePegs(board, scoringImages) {
+	createScorePegs(board, scoringImages, boxDetails) {
 		// Creates the score pegs and stores them without drawing them.
 		let posPegWidth, posPegHeight, colPegWidth, colPegHeight;
 		let posPegScale, colPegScale;
 		let posPegAnsCoords, colPegAnsCoords;
-		let scoringBox = board.scoringBoxDetails;
+		let scoringBox = boxDetails;
 		let boxHeight = scoringBox['height'];
 		let boxWidth = scoringBox['width'];
 		let boxStartX = scoringBox['x_pos'];
@@ -356,20 +350,19 @@ export class Board {
 			posPegScale = posPeg.width / posPeg.height;
 			posPegHeight = rel_height;
 			posPegWidth = posPegHeight * posPegScale;
-			let posPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight);
-			board.scoreRelPositions.push(posPegCoords); //Pos coords at idx 0.
+			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions, 0);
 		}
 		colPeg.onload = () => {
 			colPegScale = colPeg.width / colPeg.height;
 			colPegHeight = rel_height;
 			colPegWidth = colPegHeight * colPegScale;
-			let colPegCoords = board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight);
-			board.scoreRelPositions.push(colPegCoords); //Col coords at idx 1.
+			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions, 1);
 		}
 	}
 
-	calculateRelativeScorePos(boardSize, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height) {
+	calculateRelativeScorePos(boardSize, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height, scoreRelPositions, idx) {
 		// Calculates the relative x and y coordinates to place pegs on an image. Returns an array with the relative coordinates/positions.
+		console.log("Calculating relative Score Positions")
 		let relativePoses;
 
 		function calcFourBoard(size, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height) {
@@ -433,7 +426,6 @@ export class Board {
 				let rel_pos_coords = {name : 'Relative Coords', x : corner_x, y : corner_y, width : image_width, height : image_height};
 				result.push(rel_pos_coords);
 			}
-			
 			return result;
 		}
 
@@ -445,7 +437,8 @@ export class Board {
 		} else if (boardSize === 6) {
 			relativePoses = calcSixBoard(6, score_row_start, scoring_img_width, scoring_img_height, image_width, image_height);
 		}
-		return relativePoses;
+		// Set these values to the board property.
+		scoreRelPositions[idx] = relativePoses;
 		
 	}
 
@@ -480,6 +473,7 @@ export class Board {
 	
 	checkAnswer(board) {
 		// Uses a scoring class to score the row and overall game results.
+		let result = [];
 		let game_state = board.state;
 		let curr_row = board.row_answers;
 		let row_player_answers = [];
@@ -494,9 +488,6 @@ export class Board {
 
 			// Score the players answer into black and white pegs
 			let row_scores = board.scoreClass.scoreRowValues(board.game_answers, row_player_answers);
-			console.log('Result of scoring function is', row_scores);
-			console.log('Machine answers are', board.game_answers);
-			console.log('Player answers are', row_player_answers);
 
 			// Draw the resulting pegs based on the row_scores
 			let num_pos_ans = row_scores[1];
@@ -519,21 +510,37 @@ export class Board {
 			if (num_pos_ans == board.boardSize) {
 				// Game won, Reveal answers, Rate game.
 				board.game_state = false;
+				// Draw game answers.
+				board.drawAnswer(board, board.row_circles[0], board.color_images);
 				board.revealGameAnswers(board.ctx_2);
-				// scoreGamePlayed(stars_x, stars_y, curr_play_row, stars_back_height);------------------------------------------
+				result = board.rateGame(board, board.curr_play_row);
 			} else if(board.curr_play_row > 1) {
 				// Move to the next row, slide the submit answer as well.
 				board.curr_play_row -= 1;
 				board.moveCheckButton('checkBtn', board.curr_play_row);
 			} else {
-				// Reset board details.
+				// Reset board details and draw answers
 				board.curr_play_row = 10;
 				board.game_state = false;
+				board.drawAnswer(board, board.row_circles[0], board.color_images);
 				board.revealGameAnswers(board.ctx_2);
+				result = board.rateGame(board, 0);
 				board.moveCheckButton('checkBtn', board.curr_play_row);
 			}
+
 			// Reset the row poses to initial state
 			board.row_answers = board.row_answers.fill(0);
+			// Calculate game result if done
+			if (board.game_state === false && board.starImgBack !== undefined) {
+				if (result[0] === 0) {
+					// Player lost. No stars only message
+					board.displayResult(result[1]);
+				} else {
+					// Player won
+					board.drawStarsFront(result[0]);
+					board.displayResult(result[1]);
+				}
+			}
 		}
 
 	}
@@ -566,7 +573,6 @@ export class Board {
 			this.clearFromCanvas(context, startX, startY, clearSize, rowGridHeight);
 			startX += clearSize;
 		}, 50);
-
 	}
 
 	moveCheckButton(btnName, newRow) {
@@ -581,7 +587,6 @@ export class Board {
 		let clear_height = checkCircle.img_height + 0.02 * checkCircle.radius;
 		let ctx = this.ctx_1;
 		this.clearFromCanvas(ctx, clear_x, clear_y, clear_width, clear_height);
-
 		// Compute the new check button x and y positions.
 		let new_x = clear_x;
 		let new_y = nextRow * this.rel_row_h + (this.row_grid_height - checkCircle.img_height) / 2;
@@ -589,7 +594,6 @@ export class Board {
 		this.game_ctrls[btnName][0] = checkCircle;
 		ctx.drawImage(checkImg, new_x, new_y, checkCircle.img_width, checkCircle.img_height);
 	}
-
 
 	playGame(color_images, answer_images) {
 		this.answerImgs = answer_images;
@@ -611,7 +615,6 @@ export class Board {
 						color_peg.drawColorCircle(ctx_2, 3, "#797979", 4);
 					}
 				});
-
 				// Identify the curr game row playing, then circle clicked.
 				let circle_clicked = 0; 
 				let check_circles = this.row_circles[this.curr_play_row];
@@ -631,7 +634,6 @@ export class Board {
 								height : this.col_selected.img_height
 							};
 							this.row_answers[i] = curr_col;
-
 							// Clear color panel color circle, set col_selected to false
 							this.clearSelectedColor(ctx_2, this.col_selected);
 							this.col_selected = false;
@@ -655,14 +657,10 @@ export class Board {
 						ctx_2.drawImage(item.src, item.x - item.width / 2, item.y - item.height / 2, item.width, item.height);
 					}
 				}
-
 			}
-
 			// Check if any of the buttons have been clicked.
 			let buttons_arrs = Object.entries(this.game_ctrls);
-			console.log('Buttons for the board are:', buttons_arrs);
 			buttons_arrs.forEach((button) => {
-				console.log('button item is', button);
 				let btn_name = button[0];
 				let btn_item = button[1][0];
 				let button_result = this.checkIntersect(pos, btn_item);
@@ -671,15 +669,29 @@ export class Board {
 					let btn_img = button[1][1];
 					let btn_func = button[1][2];
 					let game_state = this.game_state;
-					console.log('The button image is', btn_img);
-					console.log('Game state is', game_state);
 					btn_func(board);
-					// console.log('The button function is', btn_func);
-					// btn_func();
 					this.col_selected = false;
 				}	
 			});
 		})
+	}
+
+	rateGame(board, playRow){
+		// If a rating system has been defined
+		let starRating, ratingMessage;
+		if (board.ratingSys !== undefined) {
+			let goldStars = board.goldStars;
+			let goldStarImg = goldStars.goldStar;
+			let maxRating = board.ratingSys.maxRating;
+			starRating = board.ratingSys.starRating(playRow);
+			ratingMessage = board.ratingSys.getRatingMsg(playRow);
+			// Draw the starFront image.
+			board.ratingSys.drawStarsScore(board, board.ctx_2, goldStars.posX, goldStars.posY, goldStars.width, goldStars.height, goldStarImg, starRating, maxRating);
+			// Display Game Message.
+
+		}
+		return [starRating, ratingMessage];
+
 	}
 
 }

@@ -47,10 +47,6 @@ export class GameControlButton {
         }
     }
 
-    // buttonFunctionality (functionDef) {
-    //     return functionDef;
-    // }
-
     getButtonControl() {
         let controlArr = this.gameControlArr;
         return controlArr;
