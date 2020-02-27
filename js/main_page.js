@@ -1,55 +1,41 @@
 /* 
-
 Javascript for MasterMind Gems
-
 Front/Main page loading
-
 */
 
-function showPage(id) {
-	// Internal page navigation only
-	let element = document.getElementById(id);
-	element.style.display="grid";
-	window.location = "#" + id;
-	// element.style.animation-play-state="paused";
-	// document.getElementById(id).style.display="grid";
-}
+// Internal page navigation only
+const showPage = pageId => {
+  const element = document.getElementById(pageId);
+  element.style.display = "grid";
+  window.location = "#" + pageId;
+};
 
+const hidePage = pageId => {
+  const element = document.getElementById(pageId);
+  element.style.display = "none";
+};
 
-function hidePage(id) {
-	let element = document.getElementById(id);
-	// if (element.classList.contains("onstart-load")) {
-	// 	element.classList.remove("onstart-load");
-	// }
-	element.style.display="none";
+const animatePageHiding = pageId => {
+  const current_pg = document.getElementById(pageId);
+  if (current_pg.classList.contains("onstart-load")) {
+    current_pg.classList.remove("onstart-load");
+  }
+  current_pg.className += " unload";
+};
 
-	// let elements = document.getElementById(id), element_children = elements.getElementsByName("A");
-	// element_children.style
+const resetPageStyle = () => {
+  const current_pg = document.getElementById(pageId);
+  if (current_pg.classList.contains("unload")) {
+    current_pg.classList.remove("unload");
+  }
+};
 
-	// let div_parent = document.getElementById(row_no),
- //            div_children = div_parent.getElementsByTagName("DIV");
+const hideAndShow = (hideId, showId) => {
+  animatePageHiding(hideId);
 
-}
-
-
-function hideAndShow(hideId, showId) {
-	let current_pg = document.getElementById(hideId);
-
-	if (current_pg.classList.contains("onstart-load")) {
-		current_pg.classList.remove("onstart-load");
-	}
-
-	current_pg.className += " unload";
-
-	window.setTimeout( () => {
-		hidePage(hideId);
-		showPage(showId);
-
-		// remember to remove the unload class from the previous element
-		if (current_pg.classList.contains("unload")) {
-			current_pg.classList.remove("unload");
-		}
-
-	}, 2000);
-	
-}
+  window.setTimeout(() => {
+    hidePage(hideId);
+    showPage(showId);
+    resetPageStyle();
+  }, 2000);
+};

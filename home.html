@@ -1,207 +1,261 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>MasterMind Gems</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="css/main_page_style.css">
-	<link rel="stylesheet" type="text/css" href="css/main_page_preloader.css">
-	<script type="text/javascript" src="js/main_page.js"></script>
-	
-</head>
+  <head>
+    <title>MasterMind Gems</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="css/main_page_style.css" />
+    <link rel="stylesheet" type="text/css" href="css/main_page_preloader.css" />
+    <script type="text/javascript" src="js/main_page.js"></script>
+  </head>
 
-<body id="main-body" class="body-content">
-	<!-- MAIN-PAGE -->
-	<div id="main-pg" class="page-content onstart-load">
+  <body id="main-body" class="body-content">
+    <!-- MAIN-PAGE -->
+    <div id="main-pg" class="page-content onstart-load">
+      <!-- Top section with the image -->
+      <div class="top-section top-transition">
+        <div class="title-header">
+          <img class="game-title" src="images/07_Title.png" />
+        </div>
+      </div>
 
-		<!-- Top section with the image -->
-		<div class="top-section top-transition">
-			<div class="title-header">
-				<img class="game-title" src="images/07_Title.png">
-			</div>
-		</div>
+      <!-- Content section with main game navigation -->
+      <nav class="content-section load-transition">
+        <a class="nav-link" onclick="hideAndShow('main-pg','board-select-pg')">
+          <div class="menu-title load-item initial-load" id="new-game">
+            New Game
+          </div>
+        </a>
+        <a class="nav-link" onclick="hideAndShow('main-pg','instructions-pg')">
+          <div class="menu-title load-item initial-load" id="instructions">
+            Instructions
+          </div>
+        </a>
+        <a class="nav-link" onclick="hideAndShow('main-pg','about-pg')">
+          <div class="menu-title load-item initial-load" id="about">About</div>
+        </a>
+      </nav>
 
-		<!-- Content section with main game navigation -->
-		<nav class="content-section load-transition">
-			<!-- href="javascript:hideAndShow('main-pg','board-select-pg')" -->
-			<a class="nav-link" href="javascript:void(0)" onclick="javascript:hideAndShow('main-pg','board-select-pg')" target="">
-				<div class="menu-title load-item initial-load" id="new-game">New Game</div>
-			</a>
-			<a class="nav-link" href="javascript:void(0)" onclick="javascript:hideAndShow('main-pg','instructions-pg')" target="">
-				<div class="menu-title load-item initial-load" id="instructions">Instructions</div>
-			</a>
-			<a class="nav-link" href="javascript:void(0)" onclick="javascript:hideAndShow('main-pg','about-pg')" target="">
-				<div class="menu-title load-item initial-load" id="about">About</div>
-			</a>
-		</nav>
+      <!-- Footer section -->
+      <footer class="footer-content">
+        <div class="information">
+          <div class="other-links"></div>
+          <div class="social-media"></div>
+          <span class="person-info">&copy;2019 &nbsp;Loet</span>
+        </div>
+      </footer>
+    </div>
 
-		<!-- Footer section -->
-		<footer class="footer-content">
-			<div class="information">
-				<!-- <div class="social-media"></div> -->
-				<div class="other-links"></div>
-				<div class="social-media"></div>
-				<span class="person-info">&copy;2019 &nbsp;Loet</span>
-			</div>
-		</footer>
+    <!-- BOARD-SELECT PAGE -->
+    <div id="board-select-pg" class="page-content">
+      <!-- Top section with the image -->
+      <div class="top-section">
+        <div class="title-header">
+          <img class="game-title" src="images/07_Title.png" />
+        </div>
+      </div>
 
-	</div>
+      <!-- Content section with main game navigation -->
+      <nav class="content-section">
+        <a class="nav-link" href="FourBoard.html" target="">
+          <div class="menu-title load-item">4 Board</div>
+        </a>
+        <a class="nav-link" href="FiveBoard.html" target="">
+          <div class="menu-title load-item">5 Board</div>
+        </a>
+        <a class="nav-link" href="SixBoard.html" target="">
+          <div class="menu-title load-item">6 Board</div>
+        </a>
+      </nav>
 
+      <!-- Footer section -->
+      <footer class="footer-content">
+        <div class="information">
+          <div class="other-links">
+            <a class="nav-link" href="#main-pg" target="">
+              <div
+                class="menu-title load-item"
+                id="back_1"
+                onclick="hideAndShow('board-select-pg','main-pg')"
+              >
+                Back
+              </div>
+            </a>
+          </div>
+          <div class="social-media"></div>
+          <span class="person-info">&copy;2019 &nbsp;Loet</span>
+        </div>
+      </footer>
+    </div>
 
+    <!-- INSTRUCTIONS PAGE -->
+    <div id="instructions-pg" class="page-content">
+      <!-- Top section with the image -->
+      <div class="top-section">
+        <div class="title-header">
+          <img class="game-title" src="images/07_Title.png" />
+        </div>
+      </div>
 
-	<!-- BOARD-SELECT PAGE -->
-	<div id="board-select-pg" class="page-content">
+      <!-- Content section with instructions text -->
+      <div class="content-section">
+        <div class="toggle-item">
+          <h2 class="page-title">Objective</h2>
+        </div>
+        <div id="instructions-content" class="text-box toggle-item">
+          <p class="text-content">
+            Use your deductive skills to decipher a secret color code set by
+            ‘The CodeMaster’.<br />
 
-		<!-- Top section with the image -->
-		<div class="top-section">
-			<div class="title-header">
-				<img class="game-title" src="images/07_Title.png">
-			</div>
-		</div>
+            The CodeMaster has hidden a set of colors in a sequence. Your goal
+            is to decipher the CodeMaster's hidden set.<br />
+            You have 10 chances only to do this. At the end of each round The
+            CodeMaster will give you clues as to which of your colors are either
+            the correct color or position according to the following Key:
+          </p>
+          <ul class="list-items">
+            <li class="list-row">
+              <img
+                class="game-icon"
+                src="images/05_Answer_red_2.png"
+                alt="red-dot-peg"
+              /><span
+                >Red peg - A color in the set is both the correct color and
+                position.</span
+              >
+            </li>
+            <li class="list-row">
+              <img
+                class="game-icon"
+                src="images/05_Answer_white_2.png"
+                alt="white-dot-peg"
+              /><span
+                >White peg - A color in the set is the right color only.</span
+              >
+            </li>
+          </ul>
+          <p class="text-content">
+            The placement of the Key Pegs does not indicate which Code Pegs are
+            correct.<br /><br />Can you break the code and achive MasterMind
+            status?<br /><br />Good Luck!
+          </p>
+        </div>
+      </div>
 
-		<!-- Content section with main game navigation -->
-		<nav class="content-section">
-			<a class="nav-link" href="FourBoard.html" target="">
-				<div class="menu-title load-item">4 Board</div>
-			</a>
-			<a class="nav-link" href="FiveBoard.html" target="">
-				<div class="menu-title load-item">5 Board</div>
-			</a>
-			<a class="nav-link" href="SixBoard.html" target="">
-				<div class="menu-title load-item">6 Board</div>
-			</a>
-		</nav>
+      <!-- Footer section -->
+      <footer class="footer-content">
+        <div class="information">
+          <div class="other-links">
+            <a
+              class="nav-link"
+              href="javascript:hideAndShow('instructions-pg', 'main-pg')"
+              target=""
+            >
+              <div class="menu-title load-item" id="back_2">Back</div>
+            </a>
+          </div>
+          <div class="social-media"></div>
+          <span class="person-info">&copy;2019 &nbsp;Loet</span>
+        </div>
+      </footer>
+    </div>
 
-		<!-- Footer section -->
-		<footer class="footer-content">
-			<div class="information">
-				<!-- <div class="social-media"></div> -->
-				<!-- <div class="other-links"></div> -->
-				<div class="other-links">
-					<a class="nav-link" href="#main-pg" target="">
-						<div class="menu-title load-item" id="back_1" onclick="hideAndShow('board-select-pg','main-pg')">Back
-						</div>
-					</a>
-				</div>
-				<div class="social-media"></div>
-				<span class="person-info">&copy;2019 &nbsp;Loet</span>
-			</div>
-		</footer>
-		
-	</div>
+    <!-- ABOUT PAGE -->
+    <div id="about-pg" class="page-content">
+      <!-- Top section with the image -->
+      <div class="top-section">
+        <div class="title-header">
+          <img class="game-title" src="images/07_Title.png" />
+        </div>
+      </div>
 
+      <!-- Content section with instructions text -->
+      <div class="content-section">
+        <div class="toggle-item">
+          <h2 class="page-title">About</h2>
+        </div>
+        <div class="text-box toggle-item">
+          <p class="text-content">
+            'MasterMind Gems' is a recreation of the classic board game,
+            MasterMind.<br /><br />We created this game keeping in mind the
+            nostalgia most of us have for traditional board games. It may not be
+            as fun as beating a friend at the physical game, however, we do hope
+            The CodeMaster gets you as close to the real game.<br /><br />
+            This is a hobby mini-project and we welcome all feedback, even if
+            you just want to tell us how disappointing we are!!<br /><br />Do
+            let us know what you think of the game or just say Hi on any of the
+            links below!
+          </p>
+        </div>
+        <a class="nav-link" href="#main-pg" target="">
+          <div
+            class="menu-title load-item"
+            id="back_3"
+            onclick="hideAndShow('about-pg','main-pg')"
+          >
+            Back
+          </div>
+        </a>
+      </div>
 
+      <!-- Footer section -->
+      <footer class="footer-content">
+        <div class="information">
+          <!-- <hr class="line-divider"> -->
+          <div class="other-links"></div>
+          <div class="social-media toggle-item">
+            <a
+              class="social-link"
+              href="https://twitter.com/luizoutlets"
+              title="twitter"
+            >
+              <img
+                class="social-icon"
+                src="images/social_icons/twitter-light-wheat-40px.png"
+                alt="Twitter link"
+              />
+            </a>
+            <a class="social-link" href="mailto:luletco@gmail.com" title="mail">
+              <img
+                class="social-icon"
+                src="images/social_icons/mail-light-wheat-40px.png"
+                alt="email link"
+              />
+            </a>
+            <a
+              class="social-link"
+              href="https://github.com/lulets"
+              title="github"
+            >
+              <img
+                class="social-icon"
+                src="images/social_icons/github-light-wheat-40px.png"
+                alt="Github link"
+              />
+            </a>
+          </div>
 
-	<!-- INSTRUCTIONS PAGE -->
-	<div id="instructions-pg" class="page-content">
+          <span class="person-info">&copy;2019 &nbsp;Loet</span>
+        </div>
+      </footer>
+    </div>
 
-		<!-- Top section with the image -->
-		<div class="top-section">
-			<div class="title-header">
-				<img class="game-title" src="images/07_Title.png">
-			</div>
-		</div>
+    <!-- PRELOADER -->
+    <div id="preloader" class="load-wrapper">
+      <div class="loader-back"></div>
 
-		<!-- Content section with instructions text -->
-		<div class="content-section">
-			<div class="toggle-item">
-				<h2 class="page-title">Objective</h2>
-			</div>
-			<div id="instructions-content" class="text-box toggle-item">
-				<p class="text-content"> 
-					Use your deductive skills to decipher a secret color code set by ‘The CodeMaster’.<br>
+      <div id="loader-box" class="box-position">
+        <div class="title-header">
+          <img class="game-title" src="images/07_Title.png" />
+        </div>
+      </div>
+    </div>
+  </body>
 
-					The CodeMaster has hidden a set of colors in a sequence. Your goal is to decipher the CodeMaster's hidden set.<br> You have 10 chances only to do this. At the end of each round The CodeMaster will give you clues as to which of your colors are either the correct color or position according to the following Key:
-				</p>
-				<ul class="list-items">
-					<li class="list-row">
-						<img class="game-icon" src="images/05_Answer_red_2.png" alt="red-dot-peg"><span>Red peg - A color in the set is both the correct color and position.</span>
-					</li>
-					<li class="list-row">
-						<img class="game-icon" src="images/05_Answer_white_2.png" alt="white-dot-peg"><span>White peg - A color in the set is the right color only.</span>
-					</li>
-				</ul>
-				<p class="text-content"> The placement of the Key Pegs does not indicate which Code Pegs are correct.<br><br>Can you break the code and achive MasterMind status?<br><br>Good Luck!</p>
-			</div>
-		</div>
-
-		<!-- Footer section -->
-		<footer class="footer-content">
-			<div class="information">
-				<div class="other-links">
-					<a class="nav-link" href="javascript:hideAndShow('instructions-pg', 'main-pg')" target="">
-						<div class="menu-title load-item" id="back_2">Back</div>
-					</a>
-				</div>
-				<div class="social-media"></div>
-				<span class="person-info">&copy;2019 &nbsp;Loet</span>
-			</div>
-		</footer>
-
-	</div>
-
-
-
-	<!-- ABOUT PAGE -->
-	<div id="about-pg" class="page-content">
-
-		<!-- Top section with the image -->
-		<div class="top-section">
-			<div class="title-header">
-				<img class="game-title" src="images/07_Title.png">
-			</div>
-		</div>
-
-		<!-- Content section with instructions text -->
-		<div class="content-section">
-			<div class="toggle-item">
-				<h2 class="page-title">About</h2>
-			</div>
-			<div class="text-box toggle-item">
-				<p class="text-content"> 'MasterMind Gems' is a recreation of the classic board game, MasterMind.<br><br>We created this game keeping in mind the nostalgia most of us have for traditional board games. It may not be as fun as beating a friend at the physical game, however, we do hope The CodeMaster gets you as close to the real game.<br><br> This is a hobby mini-project and we welcome all feedback, even if you just want to tell us how disappointing we are!!<br><br>Do let us know what you think of the game or just say Hi on any of the links below!</p>
-			</div>
-			<a class="nav-link" href="#main-pg" target="">
-				<div class="menu-title load-item" id="back_3" onclick="hideAndShow('about-pg','main-pg')">Back</div>
-			</a>
-		</div>
-
-		<!-- Footer section -->
-		<footer class="footer-content">
-			<div class="information">
-				<!-- <hr class="line-divider"> -->
-				<div class="other-links"></div>
-				<div class="social-media toggle-item">
-					<a class="social-link" href="https://twitter.com/luizoutlets" title="twitter">
-						<img class="social-icon" src="images/social_icons/twitter-light-wheat-40px.png" alt="Twitter link">
-					</a>
-					<a class="social-link" href="mailto:luletco@gmail.com" title="mail">
-						<img class="social-icon" src="images/social_icons/mail-light-wheat-40px.png" alt="email link">
-					</a>
-					<a class="social-link" href="https://github.com/lulets" title="github">
-						<img class="social-icon" src="images/social_icons/github-light-wheat-40px.png" alt="Github link">
-					</a>
-				</div>
-
-				<span class="person-info">&copy;2019 &nbsp;Loet</span>
-			</div>
-		</footer>
-
-	</div>
-
-	<!-- PRELOADER -->
-	<div id="preloader" class="load-wrapper">
-		<div class="loader-back"></div>
-
-		<div id="loader-box" class="box-position">
-			<div class="title-header">
-				<img class="game-title" src="images/07_Title.png">
-			</div>
-		</div>
-
-	</div>
-
-</body>
-
-<script type="text/javascript" src="js/main_pg_preload.js"></script>
-
+  <script type="text/javascript" src="js/main_pg_preload.js"></script>
+  <script
+    type="text/javascript"
+    src="js/modules/utils.js"
+    type="module"
+  ></script>
 </html>
