@@ -2,6 +2,7 @@
 Javascript for Preloader Animation and Page navigation
 */
 
-import { preloadWithInterval } from "./modules/utils";
+import Utils from "./utils";
 
-preloadWithInterval(6000);
+const utils = Utils();
+utils.preloadWithInterval(6000);
