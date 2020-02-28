@@ -1,6 +1,6 @@
 export class Utils {
   preloadWithInterval = timeInterval => {
-    setInterval(() => {
+    let documentState = setInterval(() => {
       if (document.readyState === "complete") {
         clearInterval(documentState);
         const bodyTag = document.getElementById("main-body");

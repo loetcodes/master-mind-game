@@ -23,7 +23,7 @@ const animatePageHiding = pageId => {
   current_pg.className += " unload";
 };
 
-const resetPageStyle = () => {
+const resetPageStyle = pageId => {
   const current_pg = document.getElementById(pageId);
   if (current_pg.classList.contains("unload")) {
     current_pg.classList.remove("unload");
@@ -36,12 +36,12 @@ const hideAndShow = (hideId, showId) => {
   window.setTimeout(() => {
     hidePage(hideId);
     showPage(showId);
-    resetPageStyle();
+    resetPageStyle(hideId);
   }, 1500);
 };
 
 const delay = (url) => {
   window.setTimeout(() => {
     window.location = url;
-  }, 1200)
+  }, 1500)
 }
