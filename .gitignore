@@ -1,3 +1,6 @@
 mastermind.code-workspace
 other
 composer.json
+node_modules
+test
+package-lock.json

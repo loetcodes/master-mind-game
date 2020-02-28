@@ -37,5 +37,11 @@ const hideAndShow = (hideId, showId) => {
     hidePage(hideId);
     showPage(showId);
     resetPageStyle();
-  }, 2000);
+  }, 1500);
 };
+
+const delay = (url) => {
+  window.setTimeout(() => {
+    window.location = url;
+  }, 1200)
+}
