@@ -16,17 +16,17 @@ const hidePage = pageId => {
 };
 
 const animatePageHiding = pageId => {
-  const current_pg = document.getElementById(pageId);
-  if (current_pg.classList.contains("onstart-load")) {
-    current_pg.classList.remove("onstart-load");
+  const currentPg = document.getElementById(pageId);
+  if (currentPg.classList.contains("onstart-load")) {
+    currentPg.classList.remove("onstart-load");
   }
-  current_pg.className += " unload";
+  currentPg.className += " unload";
 };
 
 const resetPageStyle = pageId => {
-  const current_pg = document.getElementById(pageId);
-  if (current_pg.classList.contains("unload")) {
-    current_pg.classList.remove("unload");
+  const currentPg = document.getElementById(pageId);
+  if (currentPg.classList.contains("unload")) {
+    currentPg.classList.remove("unload");
   }
 };
 
@@ -39,9 +39,3 @@ const hideAndShow = (hideId, showId) => {
     resetPageStyle(hideId);
   }, 1500);
 };
-
-const delay = (url) => {
-  window.setTimeout(() => {
-    window.location = url;
-  }, 1500)
-}

@@ -158,6 +158,12 @@ function resumeGameState(boardItem, ...element_ids) {
 	board.gameState = true;
 }
 
+function delayPageNav(url) {
+  window.setTimeout( () =>{
+    window.location = url 
+  }, 1200);
+}
+
 function createDialogBoxSize(maxWidth) {
 	// Function that creates the size of the dialog box based on the window view.
 	let dialogWidth, dialogHeight;
@@ -384,8 +390,11 @@ function drawBoardItems(numBoardHoles, codeAnswer) {
 	hintClose.addEventListener('click', function() {
 		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
 	});
-	goBackYes.addEventListener('click', function () {
-		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
+	goBackYes.addEventListener('click', function (e) {
+    e.preventDefault();
+    resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
+    let link = this.getAttribute('href');
+    delayPageNav(link);
 	});
 	goBackNo.addEventListener('click', function () {
 		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
