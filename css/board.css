@@ -1,10 +1,9 @@
 
 /* STYLING FOR THE MASTERMIND BOARD GAME.*/
 
-
 /*Default styling for devices below 800px*/
 
-@import url('https://fonts.googleapis.com/css?family=Livvic&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Livvic&display=swap");
 
 .body-content {
 	height: 100vh;
