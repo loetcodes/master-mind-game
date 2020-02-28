@@ -391,9 +391,9 @@ function drawBoardItems(numBoardHoles, codeAnswer) {
 		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
 	});
 	goBackYes.addEventListener('click', function (e) {
+    let link = this.getAttribute('href');
     e.preventDefault();
     resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
-    let link = this.getAttribute('href');
     delayPageNav(link);
 	});
 	goBackNo.addEventListener('click', function () {
