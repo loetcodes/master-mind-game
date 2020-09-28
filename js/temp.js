@@ -79,10 +79,10 @@ function init(){
 	sizeInitialCanvas(numBoardHoles, width, height, canvas1, canvas2);
 
 	// Preload the game images
+	answerImages = preloadGameImages(answersUrls);
 	numBoard = preloadGameImages(boardHoleUrl);
 	colorImages = preloadGameImages(pegUrls);
 	gameCtrlsImgs = preloadGameImages(iconsUrls);
-	answerImages = preloadGameImages(answersUrls);
 	initialized = true;
 
 	// Create first round of game answers.
