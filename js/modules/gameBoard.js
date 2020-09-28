@@ -3,18 +3,19 @@
 // import {ScoreGame} from "./gameScoring.js"
 
 export class BoardCanvas {
-  constructor(width, height, wRatio, hRatio) {
-    this.windowWidth = width;
-    this.windowHeight = height;
-    this.widthRatio = wRatio;
-    this.heightRatio = hRatio;
+    constructor(width, height, wRatio, hRatio) {
+        this.windowWidth = width;
+        this.windowHeight = height;
+        this.widthRatio = wRatio;
+        this.heightRatio = hRatio;
 		this.canvasSize = this.calculateOptimumCanvas(width, height, wRatio, hRatio);
 		this.width = this.canvasSize.width;
 		this.height = this.canvasSize.height;
 	}
 
 	calculateOptimumCanvas(windowW, windowH){
-		// Function that computes the optimum width height that is within the given ratio for the board.
+        // Function that computes the optimum width height that is within the given ratio
+        // for the board.
 		let canvasSize;
 		let maxWidth = windowW;
 		let ratio = windowW / windowH;
@@ -134,7 +135,8 @@ export class Board {
 		}
 	}
 
-	drawScoreRowPegs (scoreRowStart, ySpace, relRowY = 0, colorPanel, numBoard, rows, ctx1, answerImages) {
+    drawScoreRowPegs (scoreRowStart, ySpace, relRowY = 0, colorPanel,
+                      numBoard, rows, ctx1, answerImages) {
 		// Draws the Scoring row image pegs.
 		let scoringImg, scoringImgHeight, scoringImgWidth;
 		let scoringImgScale;
@@ -165,7 +167,8 @@ export class Board {
 		}
 	}
 
-	drawPlayerRowHole(relRowY=0, boxAllowance, colorPanel, holeY, numBoard, rows, ctx1, ctx2, GameCircle, board, colorImages) {
+    drawPlayerRowHole(relRowY=0, boxAllowance, colorPanel, holeY, numBoard,
+                      rows, ctx1, ctx2, GameCircle, board, colorImages) {
 		// Draws the row holes for each player and creates circle detection area.
 		let holeImg, holeImgWidth, holeImgHeight, holeImgScale;
 		let ansBoxWidth, ansBoxHeight;
@@ -187,10 +190,13 @@ export class Board {
 			for (let i = 0; i <= rows; i++) {
 				// Compute the y value, row_circle arr for each row.
 				yPos = i * relRowHeight + (rowGridHeight - holeImgHeight) / 2;
-				rowCircles[i] = board.createRowCircles(xPos, yPos, holeImgHeight, holeImgWidth, boardSize, ctx2, GameCircle);
+                rowCircles[i] = board.createRowCircles(xPos, yPos, holeImgHeight, holeImgWidth,
+                                                       boardSize, ctx2, GameCircle);
 				if (i == 0) {
 					// Store the answer box details
-					board.createGameAnswerBox(playerRowStart, relRowHeight, holeImg, holeImgWidth, holeImgHeight, ansBoxWidth, ansBoxHeight, width, board);
+                    board.createGameAnswerBox(playerRowStart, relRowHeight, holeImg,
+                                              holeImgWidth, holeImgHeight, ansBoxWidth,
+                                              ansBoxHeight, width, board);
 					// Draw the game answer box cover and bottom.
 					board.drawGameAnswersBox(board);
 				} else {
@@ -201,7 +207,8 @@ export class Board {
 		}	
 	}
 
-	createGameAnswerBox(playerRowStart, rowGridHeight, holeImg, holeImgWidth, holeImgHeight, ansBoxWidth, ansBoxHeight, width, board) {
+    createGameAnswerBox(playerRowStart, rowGridHeight, holeImg, holeImgWidth, holeImgHeight,
+                        ansBoxWidth, ansBoxHeight, width, board) {
 		// Creates and draws the game answers box that stores the machines answers.
 		let ansTopX = playerRowStart - (0.004 * width);
 		let ansTopY = (rowGridHeight - holeImgHeight) / 2 - (0.04 * rowGridHeight);
@@ -307,10 +314,11 @@ export class Board {
 			checkIconWidth = checkIconHeight * checkIconScale;
 			xPos = width - (0.010 * width) - checkIconWidth;
 			yPos = relRowHeight * currPlayRow + (rowGridHeight - checkIconHeight) / 2;
-      radius = checkIconWidth  / 2;
+            radius = checkIconWidth  / 2;
       
 			// Circle obj used later for click detection and button movement
-			let checkCircle = new ColorCircle(xPos + checkIconWidth / 2, yPos + checkIconHeight / 2, radius, temp, checkIconWidth, checkIconHeight);
+            let checkCircle = new ColorCircle(xPos + checkIconWidth / 2, yPos + checkIconHeight / 2, radius,
+                                              temp, checkIconWidth, checkIconHeight);
 
 			// Store the action in a obj - circle, img, function.
 			gameCtrls[temp] = [checkCircle, checkIcon, checkAnswer];
@@ -337,19 +345,22 @@ export class Board {
 			posPegScale = posPeg.width / posPeg.height;
 			posPegHeight = relHeight;
 			posPegWidth = posPegHeight * posPegScale;
-			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, posPegWidth, posPegHeight, board.scoreRelPositions, 0);
+            board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight,
+                                            posPegWidth, posPegHeight, board.scoreRelPositions, 0);
 		}
 		colPeg.onload = () => {
 			colPegScale = colPeg.width / colPeg.height;
 			colPegHeight = relHeight;
 			colPegWidth = colPegHeight * colPegScale;
-			board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight, colPegWidth, colPegHeight, board.scoreRelPositions, 1);
+            board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight,
+                                            colPegWidth, colPegHeight, board.scoreRelPositions, 1);
 		}
 	}
 
-	calculateRelativeScorePos(boardSize, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth, imageHeight, scoreRelPositions, idx) {
-    // Calculates the relative x and y coordinates to place pegs on an image. 
-    // Returns an array with the relative coordinates/positions.
+    calculateRelativeScorePos(boardSize, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth,
+                              imageHeight, scoreRelPositions, idx) {
+        // Calculates the relative x and y coordinates to place pegs on an image. 
+        // Returns an array with the relative coordinates/positions.
 		let relativePoses;
 
 		function calcFourBoard(size, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth, imageHeight) {
@@ -414,7 +425,7 @@ export class Board {
 				result.push(relPosCoords);
 			}
 			return result;
-    }
+        }
     
 		// determines boardSize and call corresponding function.
 		if (boardSize === 4) {
@@ -489,7 +500,11 @@ export class Board {
 			// Draw the pos pegs and col pegs if any.
 			let ctx = board.ctx2;
 			let pospegImg = board.answerImgs[1];
-			let colpegImg = board.answerImgs[2];
+            let colpegImg = board.answerImgs[2];
+            console.log("POSPEG IMAGE: ", pospegImg);
+            console.log("COLPEG IMAGE: ", colpegImg);
+            console.log("POS COORDS: ", posCoords);
+            console.log("COL COORDS: ",colCoords);
 			counter = board.checkPegPositions(numPosAnswer, pospegImg, posCoords, counter, ctx, relativeY);
 			counter = board.checkPegPositions(numColAnswer, colpegImg, colCoords, counter, ctx, relativeY);
 
@@ -672,7 +687,9 @@ export class Board {
 			starRating = board.ratingSys.starRating(playRow);
 			ratingMessage = board.ratingSys.getRatingMsg(playRow);
 			// Draw the starFront image.
-			board.ratingSys.drawStarsScore(board, board.ctx2, goldStars.posX, goldStars.posY, goldStars.width, goldStars.height, goldStarImg, starRating, maxRating);
+            board.ratingSys.drawStarsScore(board, board.ctx2, goldStars.posX,
+                                           goldStars.posY, goldStars.width, goldStars.height,
+                                           goldStarImg, starRating, maxRating);
 			// Display Game Message.
 
 		}
