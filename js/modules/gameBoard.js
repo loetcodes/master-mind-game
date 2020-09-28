@@ -340,25 +340,34 @@ export class Board {
 		let relHeight = boxHeight / 2 - (0.2 * boxHeight);
 		let posPeg = scoringImages[1]
 		let colPeg = scoringImages[2];
-		let numPoses = board.boardSize;
+        let numPoses = board.boardSize;
+        let relPoses = board.scoreRelPositions;
 		posPeg.onload = () => {
 			posPegScale = posPeg.width / posPeg.height;
 			posPegHeight = relHeight;
 			posPegWidth = posPegHeight * posPegScale;
-            board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight,
-                                            posPegWidth, posPegHeight, board.scoreRelPositions, 0);
+            // board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight,
+            //                                 posPegWidth, posPegHeight, board.scoreRelPositions, 0);
+            relPoses[0] = board.calculateRelativeScorePos(numPoses, boxStartX,
+                                                           boxWidth, boxHeight,
+                                                           posPegWidth, posPegHeight);
 		}
 		colPeg.onload = () => {
 			colPegScale = colPeg.width / colPeg.height;
 			colPegHeight = relHeight;
 			colPegWidth = colPegHeight * colPegScale;
-            board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight,
-                                            colPegWidth, colPegHeight, board.scoreRelPositions, 1);
+            // board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight,
+            //                                 colPegWidth, colPegHeight, board.scoreRelPositions, 1);
+            relPoses[1] = board.calculateRelativeScorePos(numPoses, boxStartX,
+                                                           boxWidth, boxHeight,
+                                                           colPegWidth, colPegHeight);
 		}
-	}
-
+    }
+    
     calculateRelativeScorePos(boardSize, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth,
-                              imageHeight, scoreRelPositions, idx) {
+                              imageHeight) {
+        // calculateRelativeScorePos(boardSize, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth,
+        //                           imageHeight, scoreRelPositions, idx) {
         // Calculates the relative x and y coordinates to place pegs on an image. 
         // Returns an array with the relative coordinates/positions.
 		let relativePoses;
@@ -436,7 +445,8 @@ export class Board {
 			relativePoses = calcSixBoard(6, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth, imageHeight);
 		}
 		// Set these values to the board property.
-		scoreRelPositions[idx] = relativePoses;
+        // scoreRelPositions[idx] = relativePoses;
+        return relativePoses;
 		
 	}
 
@@ -505,6 +515,7 @@ export class Board {
             console.log("COLPEG IMAGE: ", colpegImg);
             console.log("POS COORDS: ", posCoords);
             console.log("COL COORDS: ",colCoords);
+            console.log("BOARD IS", board);
 			counter = board.checkPegPositions(numPosAnswer, pospegImg, posCoords, counter, ctx, relativeY);
 			counter = board.checkPegPositions(numColAnswer, colpegImg, colCoords, counter, ctx, relativeY);
 
