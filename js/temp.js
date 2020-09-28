@@ -97,6 +97,7 @@ function init(){
 	mainBoard.colorImages = colorImages;
 }
 
+
 function setBoardUrls(numBoardHoles) {
 	// Sets the urls for the board hole based on the number of board hole.
 	let boardUrl;
@@ -109,6 +110,7 @@ function setBoardUrls(numBoardHoles) {
 	}
 	return boardUrl;
 }
+
 
 function sizeInitialCanvas(numBoardHoles, width, height, canvas1, canvas2) {
 	// Creates a Board canvas of set width and height and sizes the canvas
@@ -142,6 +144,7 @@ function sizeInitialCanvas(numBoardHoles, width, height, canvas1, canvas2) {
 	ctx2.height = canvasSize[height];
 }
 
+
 function resumeGameState(boardItem, ...element_ids) {
 	// Function that takes an element_id and puts its display to none, based on any parameters.
 	let board = boardItem;
@@ -158,11 +161,13 @@ function resumeGameState(boardItem, ...element_ids) {
 	board.gameState = true;
 }
 
+
 function delayPageNav(url) {
   window.setTimeout( () =>{
     window.location = url 
   }, 1200);
 }
+
 
 function createDialogBoxSize(maxWidth) {
 	// Function that creates the size of the dialog box based on the window view.
@@ -184,6 +189,7 @@ function createDialogBoxSize(maxWidth) {
 	return dialogDims;
 }
 
+
 function gamePopUpBox(board, elementIdName) {
 	// Returns a function that opens a dialog box.
 	let maxBoxWidth = board.width;
@@ -191,8 +197,8 @@ function gamePopUpBox(board, elementIdName) {
 	let otherElementIds = [];
 	for (let item of popUpItems) {
 		if (item !== elementIdName) {
-      otherElementIds.push(item);
-    }
+            otherElementIds.push(item);
+        }
 	}
 
 	function gameFunc() {
@@ -244,10 +250,12 @@ function startNewGame(board, codeAnswer, colorImages) {
 	board.drawAnswer(board, topRow, colorImages);
 }
 
+
 function getRandomRangeNum(min, max) {
 	// Returns a random number within a min-max range
 	return Math.floor(Math.random() * (max - min)) + min;
 }
+
 
 function generateHintItem(board, elementId) {
 	let maxBoxWidth = board.width;
@@ -297,28 +305,29 @@ function drawBoardItems(numBoardHoles, codeAnswer) {
 	// set edge size variable.
 	let spaces = {
 		4 : {
-      edgeSize: 0.02,
-      xSpace : 0.012,
-      ySpace : 0.10,
-      xBoxSpace : 0.005,
-      holeY : 0.12,
-      relRowY: 0
-    },
+            edgeSize: 0.02,
+            xSpace : 0.012,
+            ySpace : 0.10,
+            xBoxSpace : 0.005,
+            holeY : 0.12,
+            relRowY: 0
+        },
 		5 : {
-      edgeSize: 0.015,
-      xSpace : 0.005,
-      ySpace : 0.28,
-      xBoxSpace : 0.010,
-      holeY : 0.18,
-      relRowY: 0.001
-    },
-    6 : {edgeSize: 0.015,
-      xSpace : 0.008,
-      ySpace : 0.20,
-      xBoxSpace : 0.008,
-      holeY : 0.23,
-      relRowY: 0.001
-    }
+            edgeSize: 0.015,
+            xSpace : 0.005,
+            ySpace : 0.28,
+            xBoxSpace : 0.010,
+            holeY : 0.18,
+            relRowY: 0.001
+        },
+        6 : {
+            edgeSize: 0.015,
+            xSpace : 0.008,
+            ySpace : 0.20,
+            xBoxSpace : 0.008,
+            holeY : 0.23,
+            relRowY: 0.001
+        }
 	};
 
 	// Create a new board
@@ -333,47 +342,24 @@ function drawBoardItems(numBoardHoles, codeAnswer) {
 	relRowY = boardSpace.relRowY; // Adds additional spacing between the rows.
 
 	// Draw left side color panels on ctx1
-	board.drawLeftSidePegs(
-    pegColors,
-    edgeSize,
-    colorPanel,
-    colorPegs,
-    colorImages,
-    ColorCircle,
-    ctx1
-  );
+    board.drawLeftSidePegs(pegColors, edgeSize, colorPanel, colorPegs,
+        colorImages, ColorCircle, ctx1);
 	colorPegs = board.colorPegs;
 	
 	// Draw the Row Scoring boxes and then Create Scoring Pegs for the game.
 	let rows = 10;
-	scoreRowStart = board.colorPanel + xSpace * canvas1.width;
-  board.drawScoreRowPegs(
-    scoreRowStart,
-    ySpace,
-    relRowY,
-    board.colorPanel,
-    numBoard,
-    rows,
-    ctx1,
-    answerImages
-  );
+    scoreRowStart = board.colorPanel + xSpace * canvas1.width;
+    board.drawScoreRowPegs(scoreRowStart, ySpace, relRowY, board.colorPanel,
+        numBoard, rows, ctx1, answerImages);
+    // board.createScorePegs(answerImages, board.scoringBoxDetails);
+
 
 	// Draw Row Player Hole boxes, Answer Hole box.
 	let boxAllowance = xBoxSpace * canvas1.width;
 	playerRowStart = canvas1.width - board.colorPanel + boxAllowance;
-	board.drawPlayerRowHole(
-    relRowY,
-    boxAllowance,
-    board.colorPanel,
-    holeY,
-    numBoard,
-    rows,
-    ctx1,
-    ctx2,
-    GameCircle,
-    board,
-    colorImages
-  );
+    board.drawPlayerRowHole(relRowY, boxAllowance, board.colorPanel, holeY,
+        numBoard, rows, ctx1, ctx2, GameCircle, board, colorImages);
+    board.createScorePegs(answerImages, board.scoringBoxDetails);
 
 	// Add Event Listeners to the dialog box actions.
 	newGameYes = document.getElementById('new-game-yes');
@@ -391,10 +377,10 @@ function drawBoardItems(numBoardHoles, codeAnswer) {
 		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
 	});
 	goBackYes.addEventListener('click', function (e) {
-    let link = this.getAttribute('href');
-    e.preventDefault();
-    resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
-    delayPageNav(link);
+        let link = this.getAttribute('href');
+        e.preventDefault();
+        resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
+        delayPageNav(link);
 	});
 	goBackNo.addEventListener('click', function () {
 		resumeGameState(board, 'back-dialog', 'hint-dialog','newgame-dialog');
@@ -408,51 +394,24 @@ function drawBoardItems(numBoardHoles, codeAnswer) {
 	let positionX = board.width - (0.01 * board.width);
 	let positionY = board.height - (0.1 * board.rowGridHeight);
 	let newGameOption = gamePopUpBox(board, 'newgame-dialog');
-	newGame = createGameControl(
-    board,
-    board.ctx1,
-    board.rowGridHeight,
-    'newGameBtn',
-    ColorCircle,
-    newGameIcon,
-    positionX,
-    positionY,
-    newGameOption
-  );
+    newGame = createGameControl(board, board.ctx1, board.rowGridHeight, 'newGameBtn',
+        ColorCircle, newGameIcon, positionX, positionY, newGameOption);
 	addGameControl(board, newGame);
 
 	// 2. Back button feature.
 	let backBtnIcon = gameCtrlsImgs[1];
 	let goBackOption = gamePopUpBox(board, 'back-dialog');
 	positionX = (0.02 * board.width) + board.colorPanel / 2;
-	backBtn = createGameControl(
-    board,
-    board.ctx1,
-    board.rowGridHeight,
-    'backBtn',
-    ColorCircle,
-    backBtnIcon,
-    positionX,
-    positionY,
-    goBackOption
-  );
+    backBtn = createGameControl(board, board.ctx1, board.rowGridHeight, 'backBtn',
+        ColorCircle, backBtnIcon, positionX, positionY, goBackOption);
 	addGameControl(board, backBtn);
 
 	// 3. Hint button feature.
 	let hintBtnIcon = gameCtrlsImgs[3];
 	let getHint = generateHintItem(board, 'hint-dialog');
 	positionX = (board.width / 2) + board.colorPanel / 4;
-	hintBtn = createGameControl(
-    board,
-    board.ctx1,
-    board.rowGridHeight,
-    'hintBtn',
-    ColorCircle,
-    hintBtnIcon,
-    positionX,
-    positionY,
-    getHint
-  );
+    hintBtn = createGameControl(board, board.ctx1, board.rowGridHeight, 'hintBtn',
+        ColorCircle, hintBtnIcon, positionX, positionY, getHint);
 	addGameControl(board, hintBtn);
 
 	// Draw the Game Controls - Check Row
@@ -465,36 +424,17 @@ function drawBoardItems(numBoardHoles, codeAnswer) {
 }
 
 
-function createGameControl(
-  boardItem,
-  context,
-  itemHeight,
-  name,
-  DetectionCircle,
-  itemIcon,
-  relativeX,
-  relativeY,
-  functionality
-  ) {
+function createGameControl(boardItem, context, itemHeight, name, DetectionCircle,
+    itemIcon, relativeX, relativeY, functionality) {
 	// Creates a functionality button used in the game.
 	// Adds this button to the gameCtrls of the board.
 	let newbtn, newArr, functionalArr, otherArr;
-	let iconImageButton = new GameControlButton(
-    boardItem,
-    itemHeight,
-    name,
-    itemIcon
-  );
-	iconImageButton.drawButtonImage(
-    boardItem,
-    context,
-    relativeX,
-    relativeY,
-    DetectionCircle,
-    functionality
-  );
+	let iconImageButton = new GameControlButton(boardItem, itemHeight, name, itemIcon);
+    iconImageButton.drawButtonImage(boardItem, context, relativeX, relativeY,
+        DetectionCircle, functionality);
 	return iconImageButton;
 }
+
 
 function addGameControl(boardItem, controlItem) {
 	// Adds a functionality to the game control property in the board.
@@ -502,6 +442,7 @@ function addGameControl(boardItem, controlItem) {
 	let ctrlsName = controlItem.name;
 	boardItem.gameCtrls[ctrlsName] = ctrlsArr;	
 }
+
 
 function mainGamePlay(board) {
 	// Define the scoring class used to score the images.
@@ -513,28 +454,17 @@ function mainGamePlay(board) {
 	let maxRating = 3;
 	let ratingRatio = [1, 2, 3, 2, 2, 1]; // Ratios sum should match highestLevel + 1
 	let highestLevel = 10;
-	let gameRating = new RatingSystem (
-    maxRating,
-    minRating,
-    ratingRatio,
-    highestLevel
-  );
+	let gameRating = new RatingSystem(maxRating, minRating, ratingRatio, highestLevel);
 	gameRating.msgRating(ratingRatio, highestLevel);
 	board.ratingSys = gameRating;
 	// Since rating is defined, draw stars as well.
 	let starsBack = gameCtrlsImgs[5];
 	let starsFront = gameCtrlsImgs[6];
-	gameRating.drawStarImgs(
-    board,
-    board.width,
-    board.ctx1,
-    starsBack,
-    starsFront,
-    board.rowGridHeight
-  );
+	gameRating.drawStarImgs(board, board.width, board.ctx1, starsBack, starsFront, board.rowGridHeight);
 
 	board.playGame(colorImages, answerImages);
 }
+
 
 function preloadGameImages(imageFiles) {
 	// Preload images into a dictionary where the number is the key and property the image.

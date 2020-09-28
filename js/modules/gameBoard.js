@@ -103,7 +103,7 @@ export class Board {
 		this.scoringBoxDetails = {};
 		this.answerBoxDetails = {};
 		this.scoringPegsCoords = [];
-		this.scoreRelPositions = {};
+		this.scoreRelPositions = null;
 		this.answerImgs = null;
 	}
 
@@ -163,8 +163,10 @@ export class Board {
 				ctx1.drawImage(scoringImg, xPos, yPos, scoringImgWidth, scoringImgHeight);
 			}
 			// Create the scoring peg item using the box details and draw check button.
-			board.createScorePegs(board, answerImages, boxDetails);
+            // board.createScorePegs(board, answerImages, boxDetails);
+            console.log("CREATING SCORE PEGS");
 		}
+        // board.createScorePegs(answerImages, boxDetails);
 	}
 
     drawPlayerRowHole(relRowY=0, boxAllowance, colorPanel, holeY, numBoard,
@@ -328,40 +330,59 @@ export class Board {
 		}
 	}
 
-	createScorePegs(board, scoringImages, boxDetails) {
-		// Creates the score pegs and stores them without drawing them.
+	createScorePegs(scoringImages, boxDetails) {
+        // Creates the score pegs and stores them without drawing them.
+        let board = this;
 		let posPegWidth, posPegHeight, colPegWidth, colPegHeight;
 		let posPegScale, colPegScale;
 		let posPegAnsCoords, colPegAnsCoords;
-		let scoringBox = boxDetails;
+        let scoringBox = boxDetails;
+        console.log("INSIDE THE SCORE PEGS, THE SCORE BOX DETS", scoringBox);
 		let boxHeight = scoringBox['height'];
 		let boxWidth = scoringBox['width'];
 		let boxStartX = scoringBox['xPos'];
-		let relHeight = boxHeight / 2 - (0.2 * boxHeight);
-		let posPeg = scoringImages[1]
-		let colPeg = scoringImages[2];
+        let relHeight = boxHeight / 2 - (0.2 * boxHeight);
+        console.log("INSIDE THE SCORE PEGS, THE relHeight is", relHeight);
+        console.log("INSIDE THE SCORE PEGS, THE boxHeight is", boxHeight);
+        console.log("INSIDE THE SCORE PEGS, THE boxWidth is", boxWidth);
+        console.log("The box height directly is", scoringBox['height'])
+		let posPeg = scoringImages[1];
+        let colPeg = scoringImages[2];
         let numPoses = board.boardSize;
-        let relPoses = board.scoreRelPositions;
 		posPeg.onload = () => {
-			posPegScale = posPeg.width / posPeg.height;
+            posPegScale = posPeg.width / posPeg.height;
+            console.log("pospeg width and height", posPeg.width, posPeg.height);
+            console.log("Rel height is", relHeight);
 			posPegHeight = relHeight;
-			posPegWidth = posPegHeight * posPegScale;
+            posPegWidth = posPegHeight * posPegScale;
+            console.log("Calling the calculate relative score poses for pospeg");
+            board.scorePegImgs["posPegActualHeight"] = posPeg.height;
+            board.scorePegImgs["posPegActualWidth"] = posPeg.width;
+            // board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight,
+            //                                                              posPegWidth, posPegHeight, 0)
             // board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight,
             //                                 posPegWidth, posPegHeight, board.scoreRelPositions, 0);
-            relPoses[0] = board.calculateRelativeScorePos(numPoses, boxStartX,
-                                                           boxWidth, boxHeight,
-                                                           posPegWidth, posPegHeight);
-		}
+            // board.scoreRelPositions[0] = this.calculateRelativeScorePos(numPoses, boxStartX,
+            //                                                boxWidth, boxHeight,
+            //                                                posPegWidth, posPegHeight);
+        }
 		colPeg.onload = () => {
 			colPegScale = colPeg.width / colPeg.height;
 			colPegHeight = relHeight;
-			colPegWidth = colPegHeight * colPegScale;
+            colPegWidth = colPegHeight * colPegScale;
+            board.scorePegImgs["colPegActualHeight"] = colPeg.height;
+            board.scorePegImgs["colPegActualWidth"] = colPeg.width;
+            console.log("Calling the calculate relative score poses for colpeg");
+            // board.calculateRelativeScorePos(numPoses, boxStartX,
+            //                                                             boxWidth, boxHeight,
+            //                                                             colPegWidth, colPegHeight, 1);
             // board.calculateRelativeScorePos(numPoses, boxStartX, boxWidth, boxHeight,
             //                                 colPegWidth, colPegHeight, board.scoreRelPositions, 1);
-            relPoses[1] = board.calculateRelativeScorePos(numPoses, boxStartX,
-                                                           boxWidth, boxHeight,
-                                                           colPegWidth, colPegHeight);
-		}
+            // board.scoreRelPositions[1] = this.calculateRelativeScorePos(numPoses, boxStartX,
+            //                                                boxWidth, boxHeight,
+            //                                                colPegWidth, colPegHeight);
+        }
+        
     }
     
     calculateRelativeScorePos(boardSize, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth,
@@ -370,7 +391,9 @@ export class Board {
         //                           imageHeight, scoreRelPositions, idx) {
         // Calculates the relative x and y coordinates to place pegs on an image. 
         // Returns an array with the relative coordinates/positions.
-		let relativePoses;
+        let relativePoses;
+        // console.log("PARAMETERS ARE: ", boardSize, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth,
+        // imageHeight);
 
 		function calcFourBoard(size, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth, imageHeight) {
 			let result = [];
@@ -444,8 +467,7 @@ export class Board {
 		} else if (boardSize === 6) {
 			relativePoses = calcSixBoard(6, scoreRowStart, scoringImgWidth, scoringImgHeight, imageWidth, imageHeight);
 		}
-		// Set these values to the board property.
-        // scoreRelPositions[idx] = relativePoses;
+
         return relativePoses;
 		
 	}
@@ -481,8 +503,8 @@ export class Board {
 	
 	checkAnswer(board) {
 		// Uses a scoring class to score the row and overall game results.
-		let result = [];
-		let gameState = board.state;
+        let result = [];
+		let gameState = board.gameState;
 		let currentRow = board.rowAnswers;
 		let currPlayerAnswers = [];
 		if (currentRow.includes(0)) {
@@ -500,9 +522,40 @@ export class Board {
 			// Draw the resulting pegs based on the rowScores
 			let numPosAnswer = rowScores[1];
 			let numColAnswer = rowScores[2];
-			let counter = 0;
-			let posCoords = board.scoreRelPositions[0];
-			let colCoords = board.scoreRelPositions[1];
+            let counter = 0;
+            let posCoords, colCoords;
+            if (board.scoreRelPositions == null) {
+                // Compute the relative coords
+                board.scoreRelPositions = {};
+                let numBoard = board.boardSize;
+                // Get the scoring box hole sizes
+                let boxWidth = board.scoringBoxDetails['width'];
+                let boxHeight = board.scoringBoxDetails['height'];
+                let startX = board.scoringBoxDetails['xPos'];
+                let relHeight = boxHeight / 2 - (0.2 * boxHeight)
+
+                // Compute the relative position values for both ColPegs and PosPegs
+                let currPosWidth = board.scorePegImgs['posPegActualWidth'];
+                let currPosHeight = board.scorePegImgs['posPegActualHeight'];
+                let posPegScale = currPosWidth / currPosHeight;
+                let posPegHeight = relHeight;
+                let posPegWidth = posPegHeight * posPegScale;
+
+                // Compute the drawing size for the colPegs
+                let currColWidth = board.scorePegImgs['colPegActualWidth'];
+                let currColHeight = board.scorePegImgs['colPegActualHeight'];
+                let colPegScale = currColWidth / currColHeight;
+                let colPegHeight = relHeight;
+                let colPegWidth = colPegHeight * colPegScale;
+
+                // store the coords for both in board.scoreRelPositions
+                board.scoreRelPositions[0] = board.calculateRelativeScorePos(numBoard, startX, boxWidth,
+                    boxHeight, posPegWidth, posPegHeight);
+                board.scoreRelPositions[1] = board.calculateRelativeScorePos(numBoard, startX, boxWidth,
+                        boxHeight, colPegWidth, colPegHeight);
+            }
+			posCoords = board.scoreRelPositions[0];
+			colCoords = board.scoreRelPositions[1];
 
 			// Calculate height to curr play row.
 			let relativeY = board.relRowH * board.currPlayRow;
@@ -511,11 +564,11 @@ export class Board {
 			let ctx = board.ctx2;
 			let pospegImg = board.answerImgs[1];
             let colpegImg = board.answerImgs[2];
-            console.log("POSPEG IMAGE: ", pospegImg);
-            console.log("COLPEG IMAGE: ", colpegImg);
-            console.log("POS COORDS: ", posCoords);
-            console.log("COL COORDS: ",colCoords);
-            console.log("BOARD IS", board);
+            // console.log("POSPEG IMAGE: ", pospegImg);
+            // console.log("COLPEG IMAGE: ", colpegImg);
+            // console.log("POS COORDS: ", posCoords);
+            // console.log("COL COORDS: ",colCoords);
+            // console.log("BOARD IS", board);
 			counter = board.checkPegPositions(numPosAnswer, pospegImg, posCoords, counter, ctx, relativeY);
 			counter = board.checkPegPositions(numColAnswer, colpegImg, colCoords, counter, ctx, relativeY);
 
