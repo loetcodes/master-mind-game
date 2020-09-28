@@ -351,7 +351,7 @@ function drawBoardItems(numBoardHoles, codeAnswer) {
     scoreRowStart = board.colorPanel + xSpace * canvas1.width;
     board.drawScoreRowPegs(scoreRowStart, ySpace, relRowY, board.colorPanel,
         numBoard, rows, ctx1, answerImages);
-    // board.createScorePegs(answerImages, board.scoringBoxDetails);
+    board.createScorePegs(answerImages);
 
 
 	// Draw Row Player Hole boxes, Answer Hole box.
@@ -359,7 +359,6 @@ function drawBoardItems(numBoardHoles, codeAnswer) {
 	playerRowStart = canvas1.width - board.colorPanel + boxAllowance;
     board.drawPlayerRowHole(relRowY, boxAllowance, board.colorPanel, holeY,
         numBoard, rows, ctx1, ctx2, GameCircle, board, colorImages);
-    board.createScorePegs(answerImages, board.scoringBoxDetails);
 
 	// Add Event Listeners to the dialog box actions.
 	newGameYes = document.getElementById('new-game-yes');
